@@ -9,8 +9,36 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import devApi from "@/config/axiosDevConfig";
+import Oauth from "@/Oauth";
+import axios from "axios";
+import { useState } from "react";
 
 const LoginPage = () => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleOAuth = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await devApi.get<string>("/auth/login");
+
+      if (response.status === 200 || response.status === 201) {
+        console.log(response.data);
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setSubmitError(err.response?.data || "로그인 중 오류가 발생했습니다.");
+      } else {
+        setSubmitError("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-dvh pt-36 pb-20 px-12 flex flex-col justify-between">
       <section>
@@ -23,9 +51,14 @@ const LoginPage = () => {
         </h1>
       </section>
       <section>
+        <Button onClick={handleOAuth} className="w-full rounded-full">
+          {isSubmitting ? "요청중..." : "API 테스트"}
+        </Button>
+        {submitError && <p className="mt-1 text-sm text-center text-red-500">{submitError}</p>}
+        <Oauth />
         <Drawer>
-          <DrawerTrigger className="w-full rounded-full py-4 mb-6 bg-black text-white">
-            구글 로그인
+          <DrawerTrigger className="w-full rounded-full py-2 mb-6 bg-gray-500 text-white">
+            계정 선택
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
