@@ -17,11 +17,15 @@ jobs:
       - name: creates output
         run: sh ./build.sh
       
-      - name: Set environment variables
+      - name: Set Environment Variables
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}
+          VITE_GOOGLE_AUTH_REDIRECT_URI: ${{ secrets.VITE_GOOGLE_AUTH_REDIRECT_URI }}
         run: |
-          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "VITE_GOOGLE_CLIENT_SECRET=${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "VITE_GOOGLE_AUTH_REDIRECT_URI=${{ secrets.VITE_GOOGLE_AUTH_REDIRECT_URI }}" >> $GITHUB_ENV
+          echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env
+          echo "VITE_GOOGLE_CLIENT_SECRET=${VITE_GOOGLE_CLIENT_SECRET}" >> .env
+          echo "VITE_GOOGLE_AUTH_REDIRECT_URI=${VITE_GOOGLE_AUTH_REDIRECT_URI}" >> .env
           
       - name: Pushes to another repository
         id: push_directory
