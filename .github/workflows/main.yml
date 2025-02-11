@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     container: pandoc/latex
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v3
 
       - name: Install mustache (to update the date)
         run: apk add ruby && gem install mustache
@@ -17,15 +18,11 @@ jobs:
       - name: creates output
         run: sh ./build.sh
       
-      - name: Set Environment Variables
-        env:
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-          VITE_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}
-          VITE_GOOGLE_AUTH_REDIRECT_URI: ${{ secrets.VITE_GOOGLE_AUTH_REDIRECT_URI }}
+      - name: Create .env file
         run: |
-          echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env
-          echo "VITE_GOOGLE_CLIENT_SECRET=${VITE_GOOGLE_CLIENT_SECRET}" >> .env
-          echo "VITE_GOOGLE_AUTH_REDIRECT_URI=${VITE_GOOGLE_AUTH_REDIRECT_URI}" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> .env
+          echo "VITE_GOOGLE_CLIENT_SECRET=${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "VITE_GOOGLE_AUTH_REDIRECT_URI=${{ secrets.VITE_GOOGLE_AUTH_REDIRECT_URI }}" >> .env
           
       - name: Pushes to another repository
         id: push_directory
