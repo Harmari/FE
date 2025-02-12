@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Reservation } from "@/types/apiTypes";
+import { formatReservationDate } from "@/utils/dayFormat";
 
 interface ReservationItemProps {
   reservation: Reservation;
@@ -30,7 +31,7 @@ const DesignerItem = ({ reservation }: ReservationItemProps) => {
         {Intl.NumberFormat("ko-KR").format(reservation.consulting_fee)}원
       </span>
       <span className="text-body2 font-light text-gray-scale-300">
-        {reservation.reservation_date_time}
+        {formatReservationDate(reservation.reservation_date_time)}
       </span>
     </li>
   );
