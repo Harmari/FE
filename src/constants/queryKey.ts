@@ -3,7 +3,7 @@ const DESIGNER = {
 };
 
 const QUERY_KEY = {
-  designer: [...DESIGNER],
+  designer: DESIGNER,
 };
 
 export default QUERY_KEY;

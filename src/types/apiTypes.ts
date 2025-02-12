@@ -1,4 +1,5 @@
 export interface Designer {
+	id: string;
 	name: string;
 	address: string;
 	area: string;
@@ -8,7 +9,3 @@ export interface Designer {
 	consultationType: string[];
 	introduction: string;
 }
-
-export interface DesignersResponse {
-	designers: Designer[];
-};	
