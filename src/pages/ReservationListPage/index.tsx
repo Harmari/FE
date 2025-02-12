@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import QUERY_KEY from "@/constants/queryKey";
 import Footer from "@/components/common/Footer";
-import { getUserReservationList } from "@/apis/userReservationList";
+import { getReservationList } from "@/apis/reservation";
 import ReservationList from "./components/ReservationList";
+
+const user_id = "67ab499ba706f516fb348ddd";
 
 const ReservationListPage = () => {
   const { data, isPending, isError } = useQuery({
-    queryKey: QUERY_KEY.userReservation.list,
-    queryFn: getUserReservationList,
+    queryKey: QUERY_KEY.reservationList.list(user_id),
+    queryFn: () => getReservationList(user_id),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
@@ -16,7 +18,7 @@ const ReservationListPage = () => {
 
   let content;
   if (isPending) {
-    content = <div>Loading...</div>;
+    content = <div className="px-5">Loading...</div>;
   }
 
   if (isError) {
@@ -34,7 +36,7 @@ const ReservationListPage = () => {
 
   return (
     <>
-      <h2 className="pt-4 px-5 text-2xl font-bold mb-2">예약 내역</h2>
+      <h2 className="pt-4 px-5 text-xl font-bold mb-2">예약 내역</h2>
       {content}
       <Footer />
     </>
