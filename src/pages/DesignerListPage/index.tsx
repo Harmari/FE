@@ -3,7 +3,7 @@ import QUERY_KEY from "@/constants/queryKey";
 import { useQuery } from "@tanstack/react-query";
 import DesignerList from "./components/DesignerList";
 import { getReservationList } from "@/apis/reservation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Reservation } from "@/types/apiTypes";
 import dayjs from "dayjs";
 import ReservationItem from "./components/ReservationItem";
@@ -18,8 +18,15 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import DesignerFilterDrawer from "./components/DesignerFilterDrawer";
+import { FilterOptions } from "@/types/types";
+import FilteredOptionBox from "./components/filteredOptionbox";
 
 const DesignerListPage = () => {
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    designer_mode: ["대면", "비대면"],
+    designer_location: ["홍대/연남/합정"],
+  });
+
   const { data: designerData, isPending: designerPending } = useQuery({
     queryKey: QUERY_KEY.designer.list,
     queryFn: getDesignerList,
@@ -64,15 +71,26 @@ const DesignerListPage = () => {
         ) : (
           <div className="w-full p-1">
             <Drawer>
-              <div className="w-full flex justify-end mb-8 px-4">
+              <div className="w-full flex justify-between mb-8 px-4">
+                <div className="flex gap-2">
+                  {filterOptions.designer_mode?.map((option) => (
+                    <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
+                  ))}
+                  {filterOptions.designer_location?.map((option) => (
+                    <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
+                  ))}
+                </div>
+
                 <DrawerTrigger>
-                  <Button>필터</Button>
+                  <div>
+                    <img src="images/mage_filter.svg" alt="필터" />
+                  </div>
                 </DrawerTrigger>
               </div>
 
               <DesignerList designers={designerData} />
 
-              <DrawerContent>
+              <DrawerContent className="max-w-[375px] m-auto">
                 <DesignerFilterDrawer />
                 <DrawerFooter>
                   <DrawerClose>
