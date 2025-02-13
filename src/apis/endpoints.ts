@@ -8,6 +8,7 @@ interface ReservationEndpoint {
   list: string;
   get_list: (user_Id: string) => string;
   get_detail: (reservation_Id: string) => string;
+  cancel: (reservation_Id: string) => string;
 }
 
 interface DesignerEndpoint {
@@ -26,6 +27,7 @@ export const RESERVATION_ENDPOINT: ReservationEndpoint = Object.freeze({
   get_list: (user_Id: string) => `/reservation/get_list?user_id=${user_Id}`, // 사용자 예약 내역 조회
   get_detail: (reservation_Id: string) =>
     `/reservation/get_detail?reservation_id=${reservation_Id}`, // 예약 상세 정보 조회
+  cancel: (reservation_Id: string) => `/reservation/cancel?reservation_id=${reservation_Id}`, // 예약 취소
 });
 
 /**
