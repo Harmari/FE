@@ -32,6 +32,8 @@ const DesignerListPage = () => {
     queryFn: getDesignerList,
   });
 
+  console.log(designerData);
+
   const user_id = "67ab499ba706f516fb348ddd";
 
   const { data: reservationsData, isPending: reservationPending } = useQuery({
@@ -69,9 +71,9 @@ const DesignerListPage = () => {
         {designerPending ? (
           <div>Loading...</div>
         ) : (
-          <div className="w-full p-1">
+          <div className="w-full">
             <Drawer>
-              <div className="w-full flex justify-between mb-8 px-4">
+              <div className="w-full flex justify-between px-8 py-4 border-b border-gray-200">
                 <div className="flex gap-2">
                   {filterOptions.designer_mode?.map((option) => (
                     <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
