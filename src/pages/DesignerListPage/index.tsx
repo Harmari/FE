@@ -122,12 +122,14 @@ const DesignerListPage = () => {
             <Drawer>
               <div className="w-full flex justify-between px-8 py-4 border-b border-gray-200">
                 <div className="flex flex-wrap gap-2">
-                  {filterOptions.designer_mode && (
-                    <FilteredOptionBox option={filterOptions.designer_mode}></FilteredOptionBox>
-                  )}
+                  {/* 지역 필터링 */}
                   {filterOptions.designer_location?.map((option) => (
                     <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
                   ))}
+                  {/* 모드 필터링 */}
+                  {filterOptions.designer_mode && (
+                    <FilteredOptionBox option={filterOptions.designer_mode}></FilteredOptionBox>
+                  )}
                 </div>
 
                 <DrawerTrigger>
@@ -140,7 +142,7 @@ const DesignerListPage = () => {
               {/* 디자이너 리스트 */}
               <DesignerList designers={designerData.designer_list} />
 
-              <DrawerContent className="max-w-[375px] m-auto px-[18px] pb-[18px]">
+              <DrawerContent className="min-w-[375px] max-w-[430px] m-auto px-[18px] pb-[18px]">
                 {/* 필터 */}
                 <DesignerFilterDrawer
                   filterOptions={filterOptions}
