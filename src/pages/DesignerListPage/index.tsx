@@ -18,15 +18,53 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import DesignerFilterDrawer from "./components/DesignerFilterDrawer";
-import { FilterOptions } from "@/types/types";
+import { DesignerFilterMode, DesignerLocation, FilterOptions } from "@/types/types";
 import FilteredOptionBox from "./components/filteredOptionbox";
 
 const DesignerListPage = () => {
-  // setFilterOptions 배포 확인 위해 제거
-  const [filterOptions] = useState<FilterOptions>({
-    designer_mode: ["대면", "비대면"],
-    designer_location: ["홍대/연남/합정"],
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    designer_mode: undefined,
+    designer_location: ["서울 전체"],
   });
+
+  const handleFilterOptions = (newOption: FilterOptions) => {
+    setFilterOptions((prev) => ({
+      ...prev,
+      ...newOption,
+    }));
+  };
+
+  // 모드 필터링 체크 함수
+  const handleModeChange = (mode: DesignerFilterMode) => {
+    if (filterOptions.designer_mode === mode) {
+      handleFilterOptions({ designer_mode: undefined });
+    } else {
+      handleFilterOptions({ designer_mode: mode });
+    }
+  };
+
+  // 지역 필터링 체크 함수
+  const handleLocationChange = (location: DesignerLocation) => {
+    if (location === "서울 전체") {
+      // 서울 전체 선택
+      handleFilterOptions({ designer_location: ["서울 전체"] });
+    } else {
+      if (filterOptions.designer_location?.includes(location)) {
+        // 이미 선택된 지역 해제
+        handleFilterOptions({
+          designer_location: filterOptions.designer_location.filter((loc) => loc !== location),
+        });
+      } else {
+        // 새로운 지역 추가시 "서울 전체"를 제거하고 해당 지역 주가
+        const newLocations = filterOptions
+          .designer_location!.filter((loc) => loc !== "서울 전체")
+          .concat(location);
+        handleFilterOptions({
+          designer_location: newLocations,
+        });
+      }
+    }
+  };
 
   const { data: designerData, isPending: designerPending } = useQuery({
     queryKey: QUERY_KEY.designer.list,
@@ -83,10 +121,10 @@ const DesignerListPage = () => {
           <div className="w-full">
             <Drawer>
               <div className="w-full flex justify-between px-8 py-4 border-b border-gray-200">
-                <div className="flex gap-2">
-                  {filterOptions.designer_mode?.map((option) => (
-                    <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
-                  ))}
+                <div className="flex flex-wrap gap-2">
+                  {filterOptions.designer_mode && (
+                    <FilteredOptionBox option={filterOptions.designer_mode}></FilteredOptionBox>
+                  )}
                   {filterOptions.designer_location?.map((option) => (
                     <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
                   ))}
@@ -99,10 +137,16 @@ const DesignerListPage = () => {
                 </DrawerTrigger>
               </div>
 
+              {/* 디자이너 리스트 */}
               <DesignerList designers={designerData.designer_list} />
 
               <DrawerContent className="max-w-[375px] m-auto px-[18px] pb-[18px]">
-                <DesignerFilterDrawer />
+                {/* 필터 */}
+                <DesignerFilterDrawer
+                  filterOptions={filterOptions}
+                  handleModeChange={handleModeChange}
+                  handleLocationChange={handleLocationChange}
+                />
                 <DrawerFooter>
                   <DrawerClose>
                     <Button variant="outline">Cancel</Button>
