@@ -92,7 +92,7 @@ const DesignerListPage = () => {
 
               <DesignerList designers={designerData} />
 
-              <DrawerContent className="max-w-[375px] m-auto">
+              <DrawerContent className="max-w-[375px] m-auto px-[18px] pb-[18px]">
                 <DesignerFilterDrawer />
                 <DrawerFooter>
                   <DrawerClose>
