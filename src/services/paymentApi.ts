@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { PaymentReadyRequest, PaymentReadyResponse, PaymentApproveRequest, PaymentInfo } from '../types/payment';
 
-const BASE_URL = 'https://harmari.duckdns.org';
+// const BASE_URL = 'https://harmari.duckdns.org';
+const BASE_URL = 'http://localhost:8000';
 
 export const paymentApi = {
   ready: async (data: PaymentReadyRequest): Promise<PaymentReadyResponse> => {

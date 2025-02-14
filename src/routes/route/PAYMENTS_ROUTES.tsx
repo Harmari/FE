@@ -1,10 +1,14 @@
 import { PATH } from "@/constants/path";
-import { PaymentPage } from "@/pages";
+import { PaymentPage, PaymentSuccessPage } from "@/pages";
 
 const PAYMENTS_ROUTES = [
   {
     path: PATH.payments,
     element: <PaymentPage />,
+  },
+  {
+    path: PATH.paymentSuccess,  // '/payment/success'
+    element: <PaymentSuccessPage />,
   },
 ];
 

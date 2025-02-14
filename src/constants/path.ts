@@ -13,5 +13,6 @@ export const PATH = {
   reservationDetail: (id: string) => `/reservation/${id}`,
   reservationDetailPath: "/reservation/:id",
 
-  payments: "/payments",
-};
+  payments: "/payment",
+  paymentSuccess: "/payment/success",
+} as const;

@@ -11,6 +11,7 @@ export interface PaymentReadyResponse {
   next_redirect_pc_url: string;
   next_redirect_mobile_url: string;
   created_at: string;
+  payment_id: string;
 }
 
 export interface PaymentApproveRequest {

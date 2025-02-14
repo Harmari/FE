@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { paymentApi } from '../../services/paymentApi';
-import { PaymentInfo } from '../../types/payment';
 
 const PaymentPage = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,41 +12,22 @@ const PaymentPage = () => {
         reservation_id: "67a9fb08bff81f47736a1592",
         user_id: "test-user",
         payment_method: "KAKAO_PAY",
-        amount: 10000,
+        amount: 40000,
         status: "pending"
       });
 
+      // 결제 승인에 필요한 정보 저장
+      localStorage.setItem('tid', readyResponse.tid);
+      localStorage.setItem('order_id', readyResponse.payment_id);
+
+      // 카카오페이 결제창으로 리다이렉트
       window.location.href = readyResponse.next_redirect_pc_url;
-    } catch (err) {
-      setError('결제 준비 중 오류가 발생했습니다.');
+    } catch (error) {
+      setError(`결제 준비 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
     } finally {
       setLoading(false);
     }
   };
-
-  // 결제 승인 처리
-  React.useEffect(() => {
-    const pg_token = searchParams.get('pg_token');
-    const tid = localStorage.getItem('tid');
-    
-    if (pg_token && tid) {
-      const approvePayment = async () => {
-        try {
-          const response = await paymentApi.approve({
-            tid,
-            pg_token,
-            order_id: "test-order"
-          });
-          // 결제 성공 처리
-          navigate('/payment/success', { state: response });
-        } catch (err) {
-          navigate('/payment/fail');
-        }
-      };
-      
-      approvePayment();
-    }
-  }, [searchParams]);
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -65,7 +42,7 @@ const PaymentPage = () => {
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
           <h2 className="text-xl font-semibold mb-2">결제 정보</h2>
-          <p>결제 금액: 10,000원</p>
+          <p>결제 금액: 40,000원</p>
         </div>
 
         <button

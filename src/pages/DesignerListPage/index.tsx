@@ -22,7 +22,7 @@ import { FilterOptions } from "@/types/types";
 import FilteredOptionBox from "./components/filteredOptionbox";
 
 const DesignerListPage = () => {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+  const [filterOptions] = useState<FilterOptions>({
     designer_mode: ["대면", "비대면"],
     designer_location: ["홍대/연남/합정"],
   });
