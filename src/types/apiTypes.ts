@@ -1,5 +1,5 @@
 export interface Designer {
-  _id: string;
+  id: string;
   name: string;
   region: string;
   specialties: string;
@@ -22,4 +22,17 @@ export interface Reservation {
   mode: "대면" | "비대면";
   reservation_date_time: string;
   status: "예약완료" | "예약취소" | "상담완료";
+}
+
+export interface User {
+  email: string;
+  google_id: string;
+  name: string;
+  profile_image: string;
+  provider: string;
+  status: string;
+  refresh_token: string;
+  created_at: string;
+  updated_at: string;
+  id: string;
 }

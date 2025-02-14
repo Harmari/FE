@@ -22,6 +22,7 @@ import { FilterOptions } from "@/types/types";
 import FilteredOptionBox from "./components/filteredOptionbox";
 
 const DesignerListPage = () => {
+  // setFilterOptions 배포 확인 위해 제거
   const [filterOptions] = useState<FilterOptions>({
     designer_mode: ["대면", "비대면"],
     designer_location: ["홍대/연남/합정"],
@@ -30,15 +31,23 @@ const DesignerListPage = () => {
   const { data: designerData, isPending: designerPending } = useQuery({
     queryKey: QUERY_KEY.designer.list,
     queryFn: getDesignerList,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
-  console.log(designerData);
+  // console.log(designerData);
 
   const user_id = "67ab499ba706f516fb348ddd";
 
   const { data: reservationsData, isPending: reservationPending } = useQuery({
     queryKey: QUERY_KEY.reservationList.list(user_id),
     queryFn: () => getReservationList(user_id),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   const upcomingReservations = useMemo(() => {
@@ -90,7 +99,7 @@ const DesignerListPage = () => {
                 </DrawerTrigger>
               </div>
 
-              <DesignerList designers={designerData} />
+              <DesignerList designers={designerData.designer_list} />
 
               <DrawerContent className="max-w-[375px] m-auto px-[18px] pb-[18px]">
                 <DesignerFilterDrawer />

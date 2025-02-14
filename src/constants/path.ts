@@ -1,10 +1,7 @@
 // TODO: 임의로 정한 경로이기 떄문에 회의 후 정 계획
 export const PATH = {
-  login: "/",
+  login: "/login",
   logout: "/logout",
-  // authCallback: "/auth/callback",
-  authSuccess: "/success",
-  authError: "/error",
 
   designerList: "/designer-list",
   designerDetail: (id: string) => `/designer/${id}`,
@@ -15,4 +12,7 @@ export const PATH = {
 
   payments: "/payment",
   paymentSuccess: "/payment/success",
+
+  mypage: "/mypage",
+  
 } as const;

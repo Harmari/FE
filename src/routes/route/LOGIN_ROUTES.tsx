@@ -1,23 +1,14 @@
 import { PATH } from "@/constants/path";
-import { LoginPage, AuthSuccessPage, AuthErrorPage } from "@/pages";
+import { LoginPage } from "@/pages";
 
 const LOGIN_ROUTES = [
   {
-    path: PATH.login,
+    index: true,
     element: <LoginPage />,
   },
-  // {
-  //   path: PATH.authCallback,
-  //   element: <CallbackPage />,
-  // },
   {
-    path: PATH.authSuccess,
-    element: <AuthSuccessPage />,
-  },
-
-  {
-    path: PATH.authError,
-    element: <AuthErrorPage />,
+    path: PATH.login,
+    element: <LoginPage />,
   },
 ];
 

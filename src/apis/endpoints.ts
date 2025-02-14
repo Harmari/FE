@@ -8,10 +8,17 @@ interface ReservationEndpoint {
   list: string;
   get_list: (user_Id: string) => string;
   get_detail: (reservation_Id: string) => string;
+  cancel: (reservation_Id: string) => string;
 }
 
-interface LocalEndpoint {
+interface DesignerEndpoint {
   designers: string;
+  get_detail: (designer_id: string) => string;
+}
+
+interface MypageEndpoint {
+  me: string;
+  email: (email: string) => string;
 }
 
 /**
@@ -22,17 +29,31 @@ interface LocalEndpoint {
 
 export const RESERVATION_ENDPOINT: ReservationEndpoint = Object.freeze({
   list: `${serverURL}/reservations/list`, // 디자이너 예약 목록 조회
-  get_list: (user_Id: string) => `${BASE_URL}/reservation/get_list?user_id=${user_Id}`, // 사용자 예약 내역 조회
+  get_list: (user_Id: string) => `/reservation/get_list?user_id=${user_Id}`, // 사용자 예약 내역 조회
   get_detail: (reservation_Id: string) =>
-    `${BASE_URL}/reservation/get_detail?reservation_id=${reservation_Id}`, // 예약 상세 정보 조회
+    `/reservation/get_detail?reservation_id=${reservation_Id}`, // 예약 상세 정보 조회
+  cancel: (reservation_Id: string) => `/reservation/cancel?reservation_id=${reservation_Id}`, // 예약 취소
 });
 
 /**
 # ======================#
-|         LOCAL         |
+|        DESIGNER       |
 # ======================#
 */
 
-export const LOCAL_ENDPOINT: LocalEndpoint = Object.freeze({
-  designers: `${localURL}/designers`,
+export const DESIGNER_ENDPOINT: DesignerEndpoint = Object.freeze({
+  designers: `/designers`,
+  get_detail: (designer_id: string) => `/designers/${designer_id}`, // 디자이너 상세 정보 조회
+});
+
+/**
+# ======================#
+|         MYPAGE        |
+# ======================#
+*/
+
+export const MYPAGE_ENDPOINT: MypageEndpoint = Object.freeze({
+  me: "/user/me",
+  email: (email: string) => `/user/${email}`, // 디자이너 상세 정보
+  delete: "/user/delete",
 });
