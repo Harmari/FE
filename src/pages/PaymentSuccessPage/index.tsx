@@ -3,11 +3,16 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { paymentApi } from '../../services/paymentApi';
 import { PATH } from '@/constants/path';
 import { AxiosError } from 'axios';
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Check } from "lucide-react";
 
 interface PaymentInfo {
   amount: number;
   reservation_id: string;
   approved_at: string;
+  user_id: string;
 }
 
 const PaymentSuccessPage = () => {
@@ -19,6 +24,17 @@ const PaymentSuccessPage = () => {
   const isProcessingRef = useRef(false);
 
   useEffect(() => {
+    // 개발 테스트용 URL인 경우 mock 데이터 사용
+    // if (window.location.pathname === '/payment/success-test') {
+    //   setPaymentInfo({
+    //     amount: 40000,
+    //     reservation_id: 'test-123',
+    //     approved_at: new Date().toISOString()
+    //   });
+    //   setLoading(false);
+    //   return;
+    // }
+
     const approvePayment = async () => {
       if (isProcessingRef.current) return;
       isProcessingRef.current = true;
@@ -74,35 +90,119 @@ const PaymentSuccessPage = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto text-center p-8">
-      <div className="bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-2xl font-bold mb-6">결제 완료</h1>
-        <div className="mb-8">
-          <p className="text-lg mb-2">결제가 성공적으로 완료되었습니다.</p>
-          {paymentInfo && (
-            <div className="text-left bg-gray-50 p-4 rounded">
-              <p className="mb-2">결제 금액: {paymentInfo.amount.toLocaleString()}원</p>
-              <p className="mb-2">예약 번호: {paymentInfo.reservation_id}</p>
-              <p>결제 시간: {new Date(paymentInfo.approved_at).toLocaleString()}</p>
+    <div className="min-h-dvh relative pb-20">
+      {/* 상단 완료 메시지 */}
+      <div className="flex flex-col items-center justify-center py-8 space-y-2">
+        <Check className="w-10 h-10 mb-2 text-black stroke-2" />
+        <h1 className="text-lg font-medium">예약이 완료되었습니다.</h1>
+      </div>
+
+      {/* 예약 정보 */}
+      <Card className="border-0 shadow-none px-6">
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">예약 번호</span>
+              <span className="text-gray-700">{paymentInfo?.reservation_id}</span>
             </div>
-          )}
+
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">날짜/시간</span>
+              <span className="text-gray-700">2025년 2월 21일 오전 11:30</span>
+            </div>
+            
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">매장/담당</span>
+              <span className="text-gray-700">헤어디너 컨설스토리점</span>
+            </div>
+            
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">컨설팅 방식</span>
+              <span className="text-gray-700">대면</span>
+            </div>
+            
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">예약자</span>
+              <span className="text-gray-700">{paymentInfo?.user_id || '사용자'}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator className="my-4" />
+
+      {/* 결제 정보 */}
+      <Card className="border-0 shadow-none px-6">
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="text-lg font-medium">결제 정보</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex">
+            <span className="text-[14px] text-gray-400 w-24">결제 금액</span>
+            <span className="text-gray-700">{paymentInfo?.amount.toLocaleString()}원</span>
+          </div>
+          <div className="flex">
+            <span className="text-[14px] text-gray-400 w-24">결제 시간</span>
+            <span className="text-gray-700">{paymentInfo && new Date(paymentInfo.approved_at).toLocaleString()}</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 광고 배너 - 티켓 스타일 */}
+      <div className="px-4 mt-6 mb-20">
+        <div className="bg-black p-4 pt-5 rounded-lg">
+          <div className="text-white text-sm mb-3 text-center">
+            쿠폰받고 헤르츠 특별 컨설팅도 이용해보세요!
+          </div>
+          
+          <div className="bg-[#FFD700] p-3 rounded-lg relative overflow-hidden w-[85%] mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-black text-lg font-bold">~17,000</span>
+                <div className="text-[10px] text-gray-700 mt-1">
+                  첫 결제 고객님을 위한 특별 할인
+                  <br />
+                  즉시할인/쿠폰혜택 안내
+                </div>
+              </div>
+              {/* 다운로드 아이콘 */}
+              <svg 
+                className="w-5 h-5 text-black" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+                />
+              </svg>
+            </div>
+            {/* 티켓 스타일을 위한 원형 장식 */}
+            <div className="absolute -left-2 top-1/2 w-3 h-3 bg-black rounded-full transform -translate-y-1/2" />
+            <div className="absolute -right-2 top-1/2 w-3 h-3 bg-black rounded-full transform -translate-y-1/2" />
+          </div>
         </div>
-        
-        <div className="flex justify-center space-x-4">
-          <button
+      </div>
+
+      {/* 하단 고정 버튼은 그대로 fixed */}
+      <div className="fixed bottom-0 left-0 right-0 min-w-[375px] max-w-[430px] m-auto p-4 bg-white border-t">
+        <div className="flex gap-3 px-2">
+          <Button 
+            variant="outline" 
+            className="w-1/2 h-12" 
             onClick={() => navigate(PATH.reservationList)}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
           >
-            예약 목록 보기
-          </button>
-          {paymentInfo && (
-            <button
-              onClick={() => navigate(PATH.reservationDetail(paymentInfo.reservation_id))}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
-            >
-              예약 상세 보기
-            </button>
-          )}
+            예약확인
+          </Button>
+          <Button 
+            className="w-1/2 h-12 bg-black hover:bg-gray-800" 
+            onClick={() => navigate('/')}
+          >
+            홈으로
+          </Button>
         </div>
       </div>
     </div>

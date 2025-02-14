@@ -5,3 +5,4 @@ export { default as PaymentSuccessPage } from "./PaymentSuccessPage";
 export { default as ReservationListPage } from "./ReservationListPage";
 export { default as ReservationDetailPage } from "./ReservationDetailPage";
 export { default as MyPage } from "./MyPage";
+export { default as PaymentPreparePage } from "./PaymentPreparePage";

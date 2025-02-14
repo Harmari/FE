@@ -12,7 +12,9 @@ export const PATH = {
 
   payments: "/payment",
   paymentSuccess: "/payment/success",
+  paymentPrepare: "/payment-prepare",  // 임시 결제 준비 페이지
 
   mypage: "/mypage",
   
+
 } as const;

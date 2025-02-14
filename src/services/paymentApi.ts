@@ -4,6 +4,10 @@ import { PaymentReadyRequest, PaymentReadyResponse, PaymentApproveRequest, Payme
 // const BASE_URL = 'https://harmari.duckdns.org';
 const BASE_URL = 'http://localhost:8000';
 
+interface PayReadyResponse {
+  _id: string;
+}
+
 export const paymentApi = {
   ready: async (data: PaymentReadyRequest): Promise<PaymentReadyResponse> => {
     const response = await axios.post(`${BASE_URL}/payments/ready`, data);
@@ -17,6 +21,11 @@ export const paymentApi = {
 
   cancel: async (data: { payment_id: string; cancel_reason: string; cancel_amount: number }): Promise<PaymentInfo> => {
     const response = await axios.post(`${BASE_URL}/payments/cancel`, data);
+    return response.data;
+  },
+
+  payReady: async (): Promise<PayReadyResponse> => {
+    const response = await axios.get(`${BASE_URL}/reservation/pay_ready`);
     return response.data;
   },
 };
