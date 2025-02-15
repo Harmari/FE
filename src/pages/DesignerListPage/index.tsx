@@ -1,12 +1,12 @@
 import { getDesignerList } from "@/apis/designerList";
 import QUERY_KEY from "@/constants/queryKey";
 import { useQuery } from "@tanstack/react-query";
-import DesignerList from "./components/DesignerList";
+import DesignerList from "./components/DesignerList/DesignerList";
 import { useState } from "react";
 
 import { DesignerFilterMode, DesignerLocation, FilterOptions } from "@/types/types";
-import FilteredOptionBox from "./components/filteredOptionbox";
-import FilterDrawer from "./components/filterDrawer";
+import FilteredOptionBox from "./components/DesignerFilter/FilteredOptionBox";
+import FilterDrawer from "./components/DesignerFilter/FilterDrawer";
 import { handleLocation, handleMode } from "@/utils/filterOption";
 
 const DesignerListPage = () => {
