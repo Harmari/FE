@@ -12,10 +12,7 @@ export const getDesignerList = async (filterOptions: FilterOptions) => {
       },
       paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
     });
-
-    // console.log(params);
-
-    return response.data;
+    return response.data.designer_list;
   } catch (error) {
     // 추후 에러 핸들링 필요
     console.log(error);
