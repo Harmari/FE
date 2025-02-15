@@ -2,17 +2,15 @@ import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { DesignerFilterMode, DesignerLocation, FilterOptions } from "@/types/types";
 
-interface DesignerFilterDrawerProps {
-  filterOptions: FilterOptions;
-  handleModeChange: (mode: DesignerFilterMode) => void;
-  handleLocationChange: (location: DesignerLocation) => void;
-}
-
 const DesignerFilterDrawer = ({
-  filterOptions,
   handleModeChange,
   handleLocationChange,
-}: DesignerFilterDrawerProps) => {
+  selectedOption,
+}: {
+  handleModeChange: (mode: DesignerFilterMode) => void;
+  handleLocationChange: (location: DesignerLocation) => void;
+  selectedOption: FilterOptions;
+}) => {
   const [data, setData] = useState(20000);
 
   const locationList = ["서울 전체", "홍대/연남/합정", "강남/청담/압구정", "성수/건대"] as const;
@@ -33,7 +31,7 @@ const DesignerFilterDrawer = ({
           {/* 대면 */}
           <div
             className={`border border-[#F2F2F2] py-4 px-4 w-[50%] cursor-pointer ${
-              filterOptions.designer_mode === "대면" ? "bg-[#F9ECFF]" : ""
+              selectedOption.designer_mode === "대면" ? "bg-[#F9ECFF]" : ""
             }`}
             onClick={(e) => {
               e.stopPropagation();
@@ -49,7 +47,7 @@ const DesignerFilterDrawer = ({
           {/* 비대면 */}
           <div
             className={`border border-[#F2F2F2] py-4 px-4 w-[50%] flex flex-col justify-center items-center cursor-pointer ${
-              filterOptions.designer_mode === "비대면" ? "bg-[#F9ECFF]" : ""
+              selectedOption.designer_mode === "비대면" ? "bg-[#F9ECFF]" : ""
             }`}
             onClick={(e) => {
               e.stopPropagation();
@@ -72,7 +70,7 @@ const DesignerFilterDrawer = ({
             <div
               key={location}
               className={`rounded-full px-2 py-1 cursor-pointer ${
-                filterOptions.designer_location?.includes(location)
+                selectedOption.designer_location?.includes(location)
                   ? "bg-[#D896FF]"
                   : "bg-[#F0F0F0]"
               }`}
