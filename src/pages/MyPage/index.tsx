@@ -2,8 +2,9 @@ import { getEmailDetail } from "@/apis/emailDetail";
 import QUERY_KEY from "@/constants/queryKey";
 import { useQuery } from "@tanstack/react-query";
 import ProfileInfo from "./components/ProfileInfo";
-import Header from "@/components/common/Header";
-import ButtonSection from "./components/ButtonSection";
+import MyPageHeader from "./components/MyPageHeader";
+import { useNavigate } from "react-router-dom";
+import { userDelete } from "@/apis/userDelete";
 
 const email = "joajoa70584@gmail.com";
 
@@ -35,13 +36,30 @@ const MyPage = () => {
     );
   }
 
+  const navigate = useNavigate();
+
+  const handleDeleteUser = async () => {
+    const response = await userDelete();
+    if (response.status === 200) {
+      alert("회원탈퇴 되었습니다.");
+      navigate("/");
+    }
+  };
+
   if (user) {
     content = (
-      <>
-        <Header />
-        <ProfileInfo user={user} />
-        <ButtonSection />
-      </>
+      <div className="pt-8 px-8 pb-5 flex flex-col justify-between">
+        <div>
+          <MyPageHeader />
+          <ProfileInfo user={user} />
+        </div>
+        <button
+          onClick={handleDeleteUser}
+          className="w-full bg-gray-scale-100 py-3 text-body1 text-gray-scale-200 rounded-lg"
+        >
+          회원탈퇴
+        </button>
+      </div>
     );
   }
 
