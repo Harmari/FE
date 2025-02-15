@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { getDesignerList } from "@/apis/designerList";
 import { useQuery } from "@tanstack/react-query";
 import QUERY_KEY from "@/constants/queryKey";
+import { handleLocation, handleMode } from "@/utils/filterOption";
 
 const FilterDrawer = ({
   isDrawerOpen,
@@ -37,44 +38,11 @@ const FilterDrawer = ({
   }, [filterOptions]);
 
   const handleModeChange = (mode: DesignerFilterMode) => {
-    if (selectedOption.designer_mode === mode) {
-      setSelectedOption((prev) => ({ ...prev, designer_mode: undefined }));
-    } else {
-      setSelectedOption((prev) => ({ ...prev, designer_mode: mode }));
-    }
+    handleMode(mode, selectedOption, setSelectedOption);
   };
 
   const handleLocationChange = (location: DesignerLocation) => {
-    if (location === "서울 전체") {
-      // 서울 전체 선택
-      setSelectedOption((prev) => ({ ...prev, designer_location: ["서울 전체"] }));
-    } else {
-      if (selectedOption.designer_location?.includes(location)) {
-        // 이미 선택된 지역 해제
-
-        // 해당 지역을 제거한 배열
-        const filteredLocation = selectedOption.designer_location.filter((loc) => loc !== location);
-
-        setSelectedOption((prev) => ({
-          ...prev,
-          designer_location: filteredLocation,
-        }));
-
-        // 모든 지역이 제거되었으면 "서울 전체"를 추가
-        if (filteredLocation.length === 0) {
-          setSelectedOption((prev) => ({ ...prev, designer_location: ["서울 전체"] }));
-        }
-      } else {
-        // 새로운 지역 추가시 "서울 전체"를 제거하고 해당 지역 추가
-        const newLocations = selectedOption
-          .designer_location!.filter((loc) => loc !== "서울 전체")
-          .concat(location);
-        setSelectedOption((prev) => ({
-          ...prev,
-          designer_location: newLocations,
-        }));
-      }
-    }
+    handleLocation(location, selectedOption, setSelectedOption);
   };
 
   const { data: designerList } = useQuery({
