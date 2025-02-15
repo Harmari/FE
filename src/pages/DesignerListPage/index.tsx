@@ -43,8 +43,19 @@ const DesignerListPage = () => {
         {designerPending ? (
           <div>Loading...</div>
         ) : (
-          <div className="w-full">
-            <div className="w-full flex justify-between px-6 py-4 border-b border-gray-200">
+          <div className="w-full pt-[50px]">
+            <div className="flex justify-between items-end pb-[18px] px-6">
+              <p className="text-[40px] leading-[44px] text-[#D896FF]">
+                <strong className="text-[#D896FF]">땅콩형 얼굴</strong>이 <br />
+                고민이에요
+              </p>
+
+              <div className="cursor-pointer">
+                <p className="text-[#D896FF] border-b border-[#D896FF]">변경</p>
+              </div>
+            </div>
+
+            <div className="w-full flex justify-between px-6 py-4 border-b border-t border-gray-200">
               <div className="flex flex-wrap gap-2 w-[80%]">
                 {/* 지역 필터링 */}
                 {filterOptions.designer_location?.map((option) => (

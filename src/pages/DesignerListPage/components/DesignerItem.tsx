@@ -38,7 +38,7 @@ const DesignerItem = ({ designer }: DesignerItemProps) => {
             alt="designer image"
             className="object-cover rounded-md"
           />
-          <span className="text-[14px]">{designer.face_consulting_fee.toLocaleString()}~</span>
+          <span className="text-[18px]">{designer.face_consulting_fee.toLocaleString()}원~</span>
         </div>
       </article>
     </section>
