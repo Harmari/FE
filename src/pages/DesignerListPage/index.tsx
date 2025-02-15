@@ -14,7 +14,10 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import DesignerFilterDrawer from "./components/DesignerFilterDrawer";
@@ -51,9 +54,18 @@ const DesignerListPage = () => {
     } else {
       if (filterOptions.designer_location?.includes(location)) {
         // 이미 선택된 지역 해제
+
+        // 해당 지역을 제거한 배열
+        const filteredLocation = filterOptions.designer_location.filter((loc) => loc !== location);
+
         handleFilterOptions({
-          designer_location: filterOptions.designer_location.filter((loc) => loc !== location),
+          designer_location: filteredLocation,
         });
+
+        // 모든 지역이 제거되었으면 "서울 전체"를 추가
+        if (filteredLocation.length === 0) {
+          handleFilterOptions({ designer_location: ["서울 전체"] });
+        }
       } else {
         // 새로운 지역 추가시 "서울 전체"를 제거하고 해당 지역 주가
         const newLocations = filterOptions
@@ -66,19 +78,19 @@ const DesignerListPage = () => {
     }
   };
 
+  // 디자이너 리스트 조회
   const { data: designerData, isPending: designerPending } = useQuery({
-    queryKey: QUERY_KEY.designer.list,
-    queryFn: getDesignerList,
+    queryKey: QUERY_KEY.designer.list({ ...filterOptions }),
+    queryFn: () => getDesignerList(filterOptions),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
 
-  // console.log(designerData);
-
   const user_id = "67ab499ba706f516fb348ddd";
 
+  // {user_id} 예약 목록 조회
   const { data: reservationsData, isPending: reservationPending } = useQuery({
     queryKey: QUERY_KEY.reservationList.list(user_id),
     queryFn: () => getReservationList(user_id),
@@ -120,21 +132,32 @@ const DesignerListPage = () => {
         ) : (
           <div className="w-full">
             <Drawer>
-              <div className="w-full flex justify-between px-8 py-4 border-b border-gray-200">
-                <div className="flex flex-wrap gap-2">
+              <div className="w-full flex justify-between px-6 py-4 border-b border-gray-200">
+                <div className="flex flex-wrap gap-2 w-[80%]">
                   {/* 지역 필터링 */}
                   {filterOptions.designer_location?.map((option) => (
-                    <FilteredOptionBox key={option} option={option}></FilteredOptionBox>
+                    <FilteredOptionBox
+                      key={option}
+                      option={option}
+                      type={"location"}
+                      handleLocationChange={handleLocationChange}
+                      handleModeChange={handleModeChange}
+                    ></FilteredOptionBox>
                   ))}
                   {/* 모드 필터링 */}
                   {filterOptions.designer_mode && (
-                    <FilteredOptionBox option={filterOptions.designer_mode}></FilteredOptionBox>
+                    <FilteredOptionBox
+                      option={filterOptions.designer_mode}
+                      type={"mode"}
+                      handleModeChange={handleModeChange}
+                      handleLocationChange={handleLocationChange}
+                    ></FilteredOptionBox>
                   )}
                 </div>
 
                 <DrawerTrigger>
                   <div>
-                    <img src="images/mage_filter.svg" alt="필터" />
+                    <img src="/images/mage_filter.svg" alt="필터" />
                   </div>
                 </DrawerTrigger>
               </div>
@@ -143,6 +166,10 @@ const DesignerListPage = () => {
               <DesignerList designers={designerData.designer_list} />
 
               <DrawerContent className="min-w-[375px] max-w-[430px] m-auto px-[18px] pb-[18px]">
+                <DrawerHeader>
+                  <DrawerTitle></DrawerTitle>
+                  <DrawerDescription></DrawerDescription>
+                </DrawerHeader>
                 {/* 필터 */}
                 <DesignerFilterDrawer
                   filterOptions={filterOptions}
@@ -151,7 +178,12 @@ const DesignerListPage = () => {
                 />
                 <DrawerFooter>
                   <DrawerClose>
-                    <Button variant="outline">Cancel</Button>
+                    <Button
+                      variant="outline"
+                      className="bg-[#D896FF] w-full text-white mt-[107px] rounded-[12px]"
+                    >
+                      {designerData.designer_list.length}건의 결과보기
+                    </Button>
                   </DrawerClose>
                 </DrawerFooter>
               </DrawerContent>
