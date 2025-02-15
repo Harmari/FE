@@ -5,6 +5,16 @@ import ProfileInfo from "./components/ProfileInfo";
 import MyPageHeader from "./components/MyPageHeader";
 import { useNavigate } from "react-router-dom";
 import { userDelete } from "@/apis/userDelete";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const email = "joajoa70584@gmail.com";
 
@@ -53,12 +63,41 @@ const MyPage = () => {
           <MyPageHeader />
           <ProfileInfo user={user} />
         </div>
-        <button
-          onClick={handleDeleteUser}
-          className="w-full bg-gray-scale-100 py-3 text-body1 text-gray-scale-200 rounded-lg"
-        >
-          회원탈퇴
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="w-full bg-gray-scale-100 py-3 text-body1 text-gray-scale-200 rounded-lg">
+              회원탈퇴
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                <div className="w-full flex justify-center pt-6 mb-4">
+                  <div className="w-28 h-28 text-title text-red-500 bg-red-100 rounded-full flex items-center justify-center">
+                    !
+                  </div>
+                </div>
+              </DialogTitle>
+              <DialogDescription>
+                <div className="text-center text-body1 mb-3">정말로 회원탈퇴 하시겠습니까?</div>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <button
+                onClick={handleDeleteUser}
+                className="w-24 bg-gray-scale-100 py-2 text-sub-body1 text-gray-scale-200 rounded-lg"
+              >
+                네
+              </button>
+              <DialogClose
+                onClick={() => console.log("아니오")}
+                className="w-24 bg-gray-scale-200 py-2 text-sub-body1 text-gray-scale-100 rounded-lg"
+              >
+                아니오
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
