@@ -3,6 +3,7 @@ import {
   PaymentPage, 
   PaymentSuccessPage,
   PaymentPreparePage,
+  PaymentBankTransferPage,
 } from "@/pages";
 
 const PAYMENTS_ROUTES = [
@@ -17,6 +18,10 @@ const PAYMENTS_ROUTES = [
   {
     path: PATH.paymentSuccess,
     element: <PaymentSuccessPage />,
+  },
+  {
+    path: PATH.paymentBankTransfer,
+    element: <PaymentBankTransferPage />,
   },
 ];
 

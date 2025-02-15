@@ -10,9 +10,10 @@ export const PATH = {
   reservationDetail: (id: string) => `/reservation/${id}`,
   reservationDetailPath: "/reservation/:id",
 
-  payments: "/payment",
-  paymentSuccess: "/payment/success",
+  payments: "/payment", // 결제 페이지
+  paymentSuccess: "/payment/success", // 결제 성공 페이지
   paymentPrepare: "/payment-prepare",  // 임시 결제 준비 페이지
+  paymentBankTransfer: "/payment/bank-transfer", // 계좌이체 결제 페이지
 
   mypage: "/mypage",
   

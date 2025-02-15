@@ -1,3 +1,5 @@
+
+// 결제 준비 요청
 export interface PaymentReadyRequest {
   reservation_id: string;
   user_id: string;
@@ -6,6 +8,7 @@ export interface PaymentReadyRequest {
   status: 'pending';
 }
 
+// 결제 준비 응답
 export interface PaymentReadyResponse {
   tid: string;
   next_redirect_pc_url: string;
@@ -14,12 +17,14 @@ export interface PaymentReadyResponse {
   payment_id: string;
 }
 
+// 결제 승인 요청
 export interface PaymentApproveRequest {
   tid: string;
   pg_token: string;
   order_id: string;
 }
 
+// 결제 정보
 export interface PaymentInfo {
   reservation_id: string;
   user_id: string;

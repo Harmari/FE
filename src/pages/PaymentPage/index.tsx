@@ -1,16 +1,30 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { paymentApi } from '../../services/paymentApi';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PATH } from '@/constants/path';
 
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'BANK' | 'KAKAO' | null>(null);
   const location = useLocation();
   const reservationId = location.state?.reservationId;
+  const navigate = useNavigate();
+  const [agreements, setAgreements] = useState({
+    all: false,
+    agree1: false,
+    agree2: false,
+    agree3: false,
+    agree4: false
+  });
 
   const handlePayment = async () => {
+    if (selectedMethod === 'BANK') {
+      navigate(PATH.paymentBankTransfer);
+      return;
+    }
     try {
       setLoading(true);
       const readyResponse = await paymentApi.ready({
@@ -30,6 +44,35 @@ const PaymentPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setAgreements({
+      all: checked,
+      agree1: checked,
+      agree2: checked,
+      agree3: checked,
+      agree4: checked
+    });
+  };
+
+  const handleSingleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    const newAgreements = {
+      ...agreements,
+      [name]: checked
+    };
+    
+    // 모든 항목이 체크되었는지 확인
+    const allChecked = Object.keys(newAgreements)
+      .filter(key => key !== 'all')
+      .every(key => newAgreements[key as keyof typeof newAgreements]);
+    
+    setAgreements({
+      ...newAgreements,
+      all: allChecked
+    });
   };
 
   if (loading) {
@@ -72,14 +115,23 @@ const PaymentPage = () => {
             <div className="space-y-2">
               <Button 
                 variant="outline" 
-                className="w-full justify-start h-12 transition-all border border-gray-200"
-                disabled
+                className={`w-full justify-start h-12 transition-all ${
+                  selectedMethod === 'BANK' 
+                    ? 'border-2 border-black bg-gray-50' 
+                    : 'border border-gray-200'
+                }`}
+                onClick={() => setSelectedMethod('BANK')}
               >
-                계좌이체 (준비중)
+                계좌이체
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full justify-start h-12 transition-all border-2 border-black bg-gray-50"
+                className={`w-full justify-start h-12 transition-all ${
+                  selectedMethod === 'KAKAO' 
+                    ? 'border-2 border-black bg-gray-50' 
+                    : 'border border-gray-200'
+                }`}
+                onClick={() => setSelectedMethod('KAKAO')}
               >
                 카카오페이
               </Button>
@@ -93,7 +145,13 @@ const PaymentPage = () => {
             <div className="space-y-3">
               {/* 전체 동의 */}
               <div className="flex items-center gap-2">
-                <input type="checkbox" id="agreeAll" className="w-4 h-4" />
+                <input 
+                  type="checkbox" 
+                  id="agreeAll" 
+                  checked={agreements.all}
+                  onChange={handleAllCheck}
+                  className="w-4 h-4" 
+                />
                 <label htmlFor="agreeAll" className="text-sm font-medium">
                   전체 동의하기
                 </label>
@@ -103,7 +161,14 @@ const PaymentPage = () => {
               <div className="space-y-2 pt-2 border-t">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" id="agree1" className="w-4 h-4" />
+                    <input 
+                      type="checkbox" 
+                      id="agree1" 
+                      name="agree1"
+                      checked={agreements.agree1}
+                      onChange={handleSingleCheck}
+                      className="w-4 h-4" 
+                    />
                     <label htmlFor="agree1" className="text-xs text-gray-600">
                       상기 결제 내역을 확인, 결제 진행에 동의
                     </label>
@@ -112,7 +177,14 @@ const PaymentPage = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" id="agree2" className="w-4 h-4" />
+                    <input 
+                      type="checkbox" 
+                      id="agree2" 
+                      name="agree2"
+                      checked={agreements.agree2}
+                      onChange={handleSingleCheck}
+                      className="w-4 h-4" 
+                    />
                     <label htmlFor="agree2" className="text-xs text-gray-600">
                       [필수] 개인정보수집 동의
                     </label>
@@ -122,7 +194,14 @@ const PaymentPage = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" id="agree3" className="w-4 h-4" />
+                    <input 
+                      type="checkbox" 
+                      id="agree3" 
+                      name="agree3"
+                      checked={agreements.agree3}
+                      onChange={handleSingleCheck}
+                      className="w-4 h-4" 
+                    />
                     <label htmlFor="agree3" className="text-xs text-gray-600">
                       [필수] 제3자 정보제공 동의
                     </label>
@@ -132,7 +211,14 @@ const PaymentPage = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" id="agree4" className="w-4 h-4" />
+                    <input 
+                      type="checkbox" 
+                      id="agree4" 
+                      name="agree4"
+                      checked={agreements.agree4}
+                      onChange={handleSingleCheck}
+                      className="w-4 h-4" 
+                    />
                     <label htmlFor="agree4" className="text-xs text-gray-600">
                       [필수] 위수탁/번영/환불 수수료 동의
                     </label>

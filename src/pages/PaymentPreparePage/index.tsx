@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { paymentApi } from '../../services/paymentApi';
 import { PATH } from '@/constants/path';
 
+
+// 테스트용 결제 준비 페이지
 const PaymentPreparePage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
