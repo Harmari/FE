@@ -10,7 +10,7 @@ const PaymentBankTransferPage = () => {
     <div className="min-h-dvh bg-gray-50">
       <h1 className="text-xl font-medium p-4 text-center border-b">계좌이체 안내</h1>
       
-      <div className="px-6 pb-24">
+      <div className="px-6">
         {/* 예약 완료 메시지 */}
         <div className="py-8 text-center">
           <h2 className="text-xl font-medium mb-2">예약이 완료되었습니다</h2>
@@ -43,8 +43,8 @@ const PaymentBankTransferPage = () => {
         </Card>
       </div>
 
-      {/* 하단 고정 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 min-w-[375px] max-w-[430px] m-auto p-4 px-6 bg-white border-t">
+      {/* 하단 버튼 */}
+      <div className="min-w-[375px] max-w-[430px] m-auto p-4 px-6 bg-white border-t mt-8">
         <div className="flex gap-3">
           <Button 
             variant="outline"

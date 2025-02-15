@@ -90,7 +90,7 @@ const PaymentSuccessPage = () => {
   }
 
   return (
-    <div className="min-h-dvh relative pb-20">
+    <div className="min-h-dvh bg-gray-50 pb-[76px]">
       {/* 상단 완료 메시지 */}
       <div className="flex flex-col items-center justify-center py-8 space-y-2">
         <Check className="w-10 h-10 mb-2 text-black stroke-2" />
@@ -149,8 +149,8 @@ const PaymentSuccessPage = () => {
       </Card>
 
       {/* 광고 배너 - 티켓 스타일 */}
-      <div className="px-4 mt-6 mb-20">
-        <div className="bg-black p-4 pt-5 rounded-lg">
+      <div className="px-4 mt-6">
+        <div className="bg-black p-4 pt-5 pb-2 rounded-lg">
           <div className="text-white text-sm mb-3 text-center">
             쿠폰받고 헤르츠 특별 컨설팅도 이용해보세요!
           </div>
@@ -187,8 +187,8 @@ const PaymentSuccessPage = () => {
         </div>
       </div>
 
-      {/* 하단 고정 버튼은 그대로 fixed */}
-      <div className="fixed bottom-0 left-0 right-0 min-w-[375px] max-w-[430px] m-auto p-4 bg-white border-t">
+      {/* 하단 버튼 - fixed 제거하고 margin으로 간격 조정 */}
+      <div className="min-w-[375px] max-w-[430px] m-auto p-4 bg-white border-t mt-8">
         <div className="flex gap-3 px-2">
           <Button 
             variant="outline" 

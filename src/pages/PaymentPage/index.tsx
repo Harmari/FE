@@ -80,10 +80,10 @@ const PaymentPage = () => {
   }
 
   return (
-    <div className="min-h-dvh bg-gray-50">
+    <div className="min-h-dvh bg-gray-50 pb-[76px]">
       <h1 className="text-xl font-medium p-4 text-center border-b">결제</h1>
       
-      <div className="px-6 pb-24">
+      <div className="px-6">
         {/* 예약 정보 */}
         <Card className="rounded-none bg-gray-100 mt-4">
           <CardContent className="p-4">
@@ -231,8 +231,8 @@ const PaymentPage = () => {
         </Card>
       </div>
 
-      {/* 하단 고정 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 min-w-[375px] max-w-[430px] m-auto p-4 px-6 bg-white border-t">
+      {/* 하단 버튼 - fixed 제거하고 margin으로 간격 조정 */}
+      <div className="min-w-[375px] max-w-[430px] m-auto p-4 px-6 bg-white border-t mt-8">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-xs text-gray-500">총 결제금액</span>
