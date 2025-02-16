@@ -10,14 +10,26 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { DesignerMode, ReservationData } from "@/types/types";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "@/constants/path";
 
 interface DesignerDetailProps {
   id: string | undefined;
 }
 
 const DesignerDetail = ({ id }: DesignerDetailProps) => {
+  const navigate = useNavigate();
+
   const [data, setData] = useState<Designer | null>(null);
   const [open, setOpen] = useState(false);
+  const [reservationData, setReservationData] = useState<ReservationData | null>(null);
+
+  const handleModeSelect = (mode: DesignerMode) => {
+    setReservationData(
+      (prev) => prev && { ...prev, selectedMode: prev.selectedMode === mode ? null : mode }
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,9 +38,14 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
           throw new Error("잘못된 접근입니다.");
         }
 
-        const result = await getDesignerDetail(id);
+        const reponse = await getDesignerDetail(id);
 
-        setData(result);
+        setData(reponse);
+
+        setReservationData({
+          ...reponse,
+          selectedMode: null,
+        });
       } catch (error) {
         console.log(error);
       }
@@ -38,6 +55,16 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
   }, [id]);
 
   console.log(data);
+
+  const availableModes = data?.available_modes.split(", ") as DesignerMode[];
+
+  console.log(availableModes);
+
+  const goToReservation = () => {
+    if (reservationData?.selectedMode) {
+      navigate(PATH.reservationPrepare(id), { state: { reservationData } });
+    }
+  };
 
   return (
     <>
@@ -100,41 +127,60 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
           </DrawerHeader>
 
           <div className="flex gap-2 text-center pb-[30px]">
-            <div
-              className={
-                "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col"
-              }
-            >
-              {data?.available_modes.includes("대면") ? (
-                <>
-                  <p className="text-[14px]">대면</p>
-                  <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원~</p>
-                </>
-              ) : (
+            {availableModes?.includes("대면") ? (
+              <div
+                className={`py-4 px-4 w-[50%] cursor-pointer flex items-center justify-center flex-col ${
+                  reservationData?.selectedMode === "대면"
+                    ? "bg-[#B434FF] text-white"
+                    : "bg-[#F0F0F0]"
+                }`}
+                onClick={() => {
+                  handleModeSelect("대면");
+                }}
+              >
+                <p className="text-[14px]">대면</p>
+                <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원~</p>
+              </div>
+            ) : (
+              <div
+                className={
+                  "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col"
+                }
+              >
                 <p className="text-[14px]">비대면만 가능합니다</p>
-              )}
-            </div>
+              </div>
+            )}
 
-            <div
-              className={
-                "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col"
-              }
-            >
-              {data?.available_modes.includes("비대면") ? (
-                <>
-                  <p className="text-[14px]">비대면</p>
-                  <p className="text-[12px]">{data?.non_face_consulting_fee.toLocaleString()}원~</p>
-                </>
-              ) : (
+            {availableModes?.includes("비대면") ? (
+              <div
+                className={`py-4 px-4 w-[50%] cursor-pointer flex items-center justify-center flex-col ${
+                  reservationData?.selectedMode === "비대면"
+                    ? "bg-[#B434FF] text-white"
+                    : "bg-[#F0F0F0]"
+                }`}
+                onClick={() => {
+                  handleModeSelect("비대면");
+                }}
+              >
+                <p className="text-[14px]">비대면</p>
+                <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원~</p>
+              </div>
+            ) : (
+              <div
+                className={
+                  "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col"
+                }
+              >
                 <p className="text-[14px]">대면만 가능합니다</p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <DrawerFooter className="h-[88px] bg-white">
             <Button
-              className="bg-[#B434FF] text-white w-full text-[20px] font-bold py-[14px] h-[50px] transition-colors duration-200 hover:bg-[#9929CC]"
-              onClick={() => setOpen(true)}
+              className="bg-[#B434FF] text-white w-full text-[20px] font-bold py-[14px] h-[50px] transition-colors duration-200 hover:bg-[#9929CC] disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={!reservationData?.selectedMode}
+              onClick={goToReservation}
             >
               계속하기
             </Button>
