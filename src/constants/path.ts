@@ -5,6 +5,7 @@ export const PATH = {
 
   designerList: "/designer-list",
   designerDetail: (id: string) => `/designer/${id}`,
+  designerDetailPath: "/designer/:id",
 
   reservationList: "/reservation-list",
   reservationDetail: (id: string) => `/reservation/${id}`,
