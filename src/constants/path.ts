@@ -12,8 +12,6 @@ export const PATH = {
   reservationList: "/reservation-list",
   reservationDetail: (id: string) => `/reservation/${id}`,
   reservationDetailPath: "/reservation/:id",
-  reservationPrepare: (id: string) => `/reservation-prepare/${id}`,
-  reservationPreparePath: "/reservation-prepare/:id",
 
   payments: "/payment", // 결제 페이지
   paymentSuccess: "/payment/success", // 결제 성공 페이지
