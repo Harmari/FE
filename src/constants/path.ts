@@ -7,6 +7,8 @@ export const PATH = {
   designerDetail: (id: string) => `/designer/${id}`,
   designerDetailPath: "/designer/:id",
 
+  reservationPrepare: (designer_id: string | undefined) => `/reservation-prepare/${designer_id}`,
+  reservationPreparePath: "/reservation-prepare/:designer_id",
   reservationList: "/reservation-list",
   reservationDetail: (id: string) => `/reservation/${id}`,
   reservationDetailPath: "/reservation/:id",
