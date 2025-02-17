@@ -12,6 +12,8 @@ import {
 import { DesignerMode, ReservationData } from "@/types/types";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "@/constants/path";
+import Container from "./Container";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface DesignerDetailProps {
   id: string | undefined;
@@ -24,11 +26,16 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
   const [open, setOpen] = useState(false);
   const [reservationData, setReservationData] = useState<ReservationData | null>(null);
 
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const handleModeSelect = (mode: DesignerMode) => {
     setReservationData(
       (prev) => prev && { ...prev, selectedMode: prev.selectedMode === mode ? null : mode }
     );
   };
+
+  //주파수 지수
+  const frequency = 70;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,26 +74,33 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
 
   return (
     <>
-      <div>
-        <img
-          src="https://placehold.co/393x250?text=haertz"
-          alt="designer image"
-          className="object-cover rounded-md w-full"
-        />
-      </div>
+      <div className="px-5 pt-[25px] bg-white">
+        <div className="flex justify-between items-center mb-[12px]">
+          <div>
+            <p className="text-[20px] font-bold mb-[6px]">{data?.name}</p>
+            <p className="text-[14px] text-[#676767]">{data?.introduction}</p>
+          </div>
+          <img
+            src="https://placehold.co/53x53?text=haertz"
+            alt="designer image"
+            className="object-cover rounded-full"
+          />
+        </div>
 
-      <div className="px-7 pt-[25px] bg-white">
-        <div className="flex justify-between items-center mb-[22px]">
-          <div className="text-[20px] font-bold">{data?.name}</div>
-          <div className="cursor-pointer" onClick={() => alert("좋아요 기능 준비중입니다.")}>
-            <img src="/images/heart-icon.svg" alt="좋아요" />
+        <div className="mb-[85px]">
+          <h4 className="text-[12px] text-primary-200">주파수 지수</h4>
+          <div className="bg-primary-100/20 h-[10px] w-full relative">
+            <div
+              className="absolute top-0 left-0 h-full bg-primary-100 w-[50%]"
+              style={{ width: `${frequency}%` }}
+            ></div>
           </div>
         </div>
 
         <div className="text-[14px] text-[#676767] mb-[22px]">{data?.introduction}</div>
 
         <div className="mb-[22px]">
-          <p className="font-bold mb-[10px]">전문분야</p>
+          <h4 className="font-bold mb-[10px]">전문분야</h4>
           <div>
             <div className="bg-[#F6E7FF] rounded-full px-[13px] py-[2px] inline-block">
               <span className="text-[11px] text-primary-200 whitespace-nowrap">
@@ -96,13 +110,47 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
           </div>
         </div>
 
-        <div className="mb-[185px]">
+        <div className="pb-[35px] border-b border-[#F0F0F0] mb-[27px]">
           <p className="font-bold mb-[10px]">샵 주소</p>
           <div className="px-4 py-[10px] border border-[#F0F0F0] rounded-[6px] flex items-center gap-[10px]">
             <img src="/images/pointer-icon.svg" alt="위치" />
             <p className="text-[14px] text-[#676767]">{data?.shop_address}</p>
           </div>
         </div>
+
+        <div className="mb-[73px]">
+          <h4 className="font-bold mb-[10px]">포트폴리오</h4>
+
+          <Container>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div
+                key={index}
+                className="embla__slide flex-[0_0_auto] min-w-0 mr-[9px] cursor-pointer"
+                onClick={() =>
+                  setSelectedImage(`https://placehold.co/82x147?text=haertz ${index + 1}`)
+                }
+              >
+                <img
+                  src={`https://placehold.co/82x147?text=haertz ${index + 1}`}
+                  alt={`portfolio image ${index + 1}`}
+                  className="object-cover w-[82px] h-[147px]"
+                />
+              </div>
+            ))}
+          </Container>
+        </div>
+
+        <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+          <DialogContent className="p-0 overflow-hidden">
+            {selectedImage && (
+              <img
+                src={selectedImage}
+                alt="확대된 이미지"
+                className="w-full h-full object-contain"
+              />
+            )}
+          </DialogContent>
+        </Dialog>
 
         <div>
           <Button
