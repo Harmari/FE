@@ -43,3 +43,16 @@ export interface DesignerReservationList {
   mode: string;
   status: string;
 }
+
+export interface DesignerDetailResponse {
+  id: string;
+  name: string;
+  region: string;
+  shopAddress: string;
+  profileImage: string;
+  specialties: string;
+  faceConsultingFee: number;
+  nonFaceConsultingFee: number;
+  introduction: string;
+  availableModes: string;
+}
