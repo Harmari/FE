@@ -141,7 +141,7 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
                 }}
               >
                 <p className="text-[14px]">대면</p>
-                <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원~</p>
+                <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원</p>
               </div>
             ) : (
               <div
@@ -165,7 +165,7 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
                 }}
               >
                 <p className="text-[14px]">비대면</p>
-                <p className="text-[12px]">{data?.non_face_consulting_fee.toLocaleString()}원~</p>
+                <p className="text-[12px]">{data?.non_face_consulting_fee.toLocaleString()}원</p>
               </div>
             ) : (
               <div

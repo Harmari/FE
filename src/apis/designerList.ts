@@ -14,7 +14,6 @@ export const getDesignerList = async (filterOptions: FilterOptions) => {
       },
       paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
     });
-    console.log(response.data.designer_list);
 
     return response.data.designer_list;
   } catch (error) {
