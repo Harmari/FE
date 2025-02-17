@@ -48,11 +48,11 @@ export interface DesignerDetailResponse {
   id: string;
   name: string;
   region: string;
-  shopAddress: string;
-  profileImage: string;
+  shop_address: string;
+  profile_image: string;
   specialties: string;
-  faceConsultingFee: number;
-  nonFaceConsultingFee: number;
+  face_consulting_fee: number;
+  non_face_consulting_fee: number;
   introduction: string;
-  availableModes: string;
+  available_modes: string;
 }
