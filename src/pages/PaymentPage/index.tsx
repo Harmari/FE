@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { PATH } from "@/constants/path";
 import { formatReservationDate, formatReverseDate } from "@/utils/dayFormat";
 import { PaymentsData } from "@/types/types";
+import { useQuery } from "@tanstack/react-query";
+import QUERY_KEY from "@/constants/queryKey";
 
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
@@ -25,15 +27,26 @@ const PaymentPage = () => {
     agree4: false,
   });
 
+  const { data: user } = useQuery({
+    queryKey: QUERY_KEY.user.me,
+    queryFn: getUserMe,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
   const handlePayment = async () => {
     try {
       setLoading(true);
 
-      const userInfo = await getUserMe();
+      if (!user) {
+        return;
+      }
 
       const readyResponse = await paymentApi.ready({
         reservation_id: PaymentsData.id,
-        user_id: userInfo.user_id,
+        user_id: user.user_id,
         payment_method: selectedMethod === "BANK" ? "BANK" : "KAKAO_PAY",
         amount: 40000,
         status: "pending",
@@ -45,12 +58,12 @@ const PaymentPage = () => {
       await ReservationCreate({
         reservation_id: PaymentsData.id,
         designer_id: PaymentsData.id,
-        user_id: userInfo.user_id,
+        user_id: user.user_id,
         reservation_date_time: formatReverseDate(state.selectedDateTime),
         consulting_fee: state.servicePrice.toString(),
         google_meet_link: "",
         mode: PaymentsData.selectedMode,
-        status: "예약완료",
+        status: selectedMethod === "BANK" ? "입금 대기중" : "예약완료",
       });
 
       // Navigate to the success page
@@ -119,8 +132,8 @@ const PaymentPage = () => {
           <CardContent className="p-4">
             <h2 className="font-medium mb-2">예약자 정보</h2>
             <div className="space-y-2 text-sm">
-              <div>이름: 홍길동</div>
-              <div>이메일: hong@gmail.com</div>
+              <div>이름: {user?.name}</div>
+              <div>이메일: {user?.email}</div>
             </div>
           </CardContent>
         </Card>
