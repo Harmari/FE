@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -117,63 +116,60 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
 
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className="min-w-[375px] max-w-[430px] m-auto px-[18px] pb-[18px]">
-          <DrawerHeader>
-            <DrawerTitle className="text-[16px] font-bold text-left">컨설팅 방식</DrawerTitle>
-            <DrawerDescription>
-              <div className="text-[12px] text-[#868686] leading-4 text-left">
-                소요시간 약 30분
-                <br />
-                컨설팅 내용은 진행 후 요약된 리포트로 고객에게 전달됩니다.
-              </div>
-            </DrawerDescription>
+          <DrawerHeader className="pb-4 pl-0">
+            <DrawerTitle className="text-[16px] font-bold text-left">
+              컨설팅 방식을 선택해주세요.
+            </DrawerTitle>
           </DrawerHeader>
 
-          <div className="flex gap-2 text-center pb-[30px]">
+          <div className="flex flex-col gap-[10px] pb-[30px]">
             {availableModes?.includes("대면") ? (
               <div
-                className={`py-4 px-4 w-[50%] cursor-pointer flex items-center justify-center flex-col rounded-md ${
+                className={`p-3 cursor-pointer rounded-md border ${
                   reservationData?.selectedMode === "대면"
-                    ? "bg-primary-200 text-white"
+                    ? "border border-primary-100 bg-secondary-100"
                     : "bg-[#F0F0F0]"
                 }`}
                 onClick={() => {
                   handleModeSelect("대면");
                 }}
               >
-                <p className="text-[14px]">대면</p>
-                <p className="text-[12px]">{data?.face_consulting_fee.toLocaleString()}원</p>
+                <span className="text-[16px] font-bold">대면 </span>
+                <span className="text-[16px]">{data?.face_consulting_fee.toLocaleString()}원</span>
+                <p className="text-[10px] text-gray-scale-300">실제 샵에 방문하여 컨설팅 진행</p>
               </div>
             ) : (
-              <div
-                className={
-                  "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col rounded-md"
-                }
-              >
-                <p className="text-[14px]">비대면만 가능합니다</p>
+              <div className={"p-3 cursor-pointer bg-[#F0F0F0] flex flex-col rounded-md"}>
+                <span className="text-[16px] font-bold">비대면만 가능합니다</span>
               </div>
             )}
 
             {availableModes?.includes("비대면") ? (
               <div
-                className={`py-4 px-4 w-[50%] cursor-pointer flex items-center justify-center flex-col rounded-md ${
+                className={`p-3 cursor-pointer rounded-md border ${
                   reservationData?.selectedMode === "비대면"
-                    ? "bg-primary-200 text-white"
+                    ? "border border-primary-100 bg-secondary-100"
                     : "bg-[#F0F0F0]"
                 }`}
                 onClick={() => {
                   handleModeSelect("비대면");
                 }}
               >
-                <p className="text-[14px]">비대면</p>
-                <p className="text-[12px]">{data?.non_face_consulting_fee.toLocaleString()}원</p>
+                <span className="text-[16px] font-bold">비대면 </span>
+                <span className="text-[16px]">
+                  {data?.non_face_consulting_fee.toLocaleString()}원
+                </span>
+                <p className="text-[10px] text-gray-scale-300">
+                  예약 완료 후 Google Meet 링크가 생성되어 화상 컨설팅 진행
+                </p>
               </div>
             ) : (
               <div
                 className={
-                  "py-4 px-4 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col rounded-md"
+                  "p-3 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col rounded-md"
                 }
               >
-                <p className="text-[14px]">대면만 가능합니다</p>
+                <span className="text-[16px] font-bold">대면만 가능합니다</span>
               </div>
             )}
           </div>
@@ -184,7 +180,7 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
               disabled={!reservationData?.selectedMode}
               onClick={goToReservation}
             >
-              계속하기
+              다음
             </Button>
           </DrawerFooter>
         </DrawerContent>
