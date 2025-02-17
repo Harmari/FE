@@ -7,6 +7,7 @@ import { DesignerReservationList } from "@/types/apiTypes";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PATH } from "@/constants/path";
+import { ReservationData } from "@/types/types";
 
 const timeSlots = [
   { label: "오전", slots: ["10:00", "10:30", "11:00", "11:30"] },
@@ -37,7 +38,7 @@ const ReservationPrepare = () => {
   const [selectedTime, setSelectedTime] = useState<string>();
   const [reservationList, setReservationList] = useState<DesignerReservationList[]>([]);
   const { state } = useLocation();
-  const reservationData = state.reservationData;
+  const reservationData: ReservationData = state.reservationData;
   const navigate = useNavigate();
 
   const servicePrice =
@@ -110,7 +111,7 @@ const ReservationPrepare = () => {
 
     navigate(PATH.payments, {
       state: {
-        reservationData: reservationData,
+        ...reservationData,
         servicePrice: servicePrice,
         selectedDateTime: selectedDateTime, // 날짜와 시간이 결합된 Date 객체
       },
