@@ -53,18 +53,14 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
           selectedMode: null,
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
     fetchData();
   }, [id]);
 
-  console.log(data);
-
   const availableModes = data?.available_modes.split(", ") as DesignerMode[];
-
-  console.log(availableModes);
 
   const goToReservation = () => {
     if (reservationData?.selectedMode) {

@@ -18,6 +18,6 @@ export const getDesignerList = async (filterOptions: FilterOptions) => {
     return response.data.designer_list;
   } catch (error) {
     // 추후 에러 핸들링 필요
-    console.log(error);
+    console.error(error);
   }
 };
