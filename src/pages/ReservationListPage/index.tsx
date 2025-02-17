@@ -3,13 +3,26 @@ import QUERY_KEY from "@/constants/queryKey";
 import Footer from "@/components/common/Footer";
 import { getReservationList } from "@/apis/reservation";
 import ReservationList from "./components/ReservationList";
-
-const user_id = "67ab499ba706f516fb348ddd";
+import { getUserMe } from "@/apis/user";
 
 const ReservationListPage = () => {
+  const { data: user } = useQuery({
+    queryKey: QUERY_KEY.user.me,
+    queryFn: getUserMe,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
   const { data, isPending, isError } = useQuery({
-    queryKey: QUERY_KEY.reservationList.list(user_id),
-    queryFn: () => getReservationList(user_id),
+    queryKey: QUERY_KEY.reservationList.list(user?.user_id ?? "unknown"),
+    queryFn: () => {
+      if (user) {
+        return getReservationList(user.user_id); // 반드시 return 해야 함
+      }
+      return Promise.resolve([]); // 사용자 정보가 없을 때 빈 배열 반환
+    },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
