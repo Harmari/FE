@@ -17,6 +17,8 @@ const DesignerListPage = () => {
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     designer_mode: undefined,
     designer_location: ["서울 전체"],
+    min_consulting_fee: 0,
+    max_consulting_fee: 40000,
   });
 
   const location = useLocation();

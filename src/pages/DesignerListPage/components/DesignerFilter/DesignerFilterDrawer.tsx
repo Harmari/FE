@@ -1,5 +1,5 @@
 import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DesignerFilterMode, DesignerLocation, FilterOptions } from "@/types/types";
 
 const DesignerFilterDrawer = ({
@@ -13,10 +13,15 @@ const DesignerFilterDrawer = ({
   handleFeeChange: (min: number, max: number) => void;
   selectedOption: FilterOptions;
 }) => {
-  const [maxData, setMaxData] = useState(selectedOption.max_consulting_fee || 20000);
-  const [minData, setMinData] = useState(selectedOption.min_consulting_fee || 0);
+  const [maxData, setMaxData] = useState(selectedOption.max_consulting_fee);
+  const [minData, setMinData] = useState(selectedOption.min_consulting_fee);
 
   const locationList = ["서울 전체", "홍대/연남/합정", "강남/청담/압구정", "성수/건대"] as const;
+
+  useEffect(() => {
+    setMinData(selectedOption.min_consulting_fee);
+    setMaxData(selectedOption.max_consulting_fee);
+  }, [selectedOption]);
 
   return (
     <div className="pt-4" onClick={(e) => e.stopPropagation()}>
@@ -124,10 +129,7 @@ const DesignerFilterDrawer = ({
               <p>최대</p>
             </div>
             <Slider
-              defaultValue={[
-                selectedOption.min_consulting_fee || 0,
-                selectedOption.max_consulting_fee || 20000,
-              ]}
+              defaultValue={[selectedOption.min_consulting_fee, selectedOption.max_consulting_fee]}
               min={0}
               max={50000}
               step={1000}
