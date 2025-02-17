@@ -3,11 +3,21 @@ import { useNavigate } from "react-router-dom";
 import MyPageHeader from "./components/MyPageHeader";
 import ProfileInfo from "./components/ProfileInfo";
 import DeleteUserDialog from "./components/DeleteUserDialog";
-import { useUser } from "@/hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
+import QUERY_KEY from "@/constants/queryKey";
+import { getUserMe } from "@/apis/user";
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const { data: user, isLoading, isError } = useUser();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: QUERY_KEY.user.me,
+    queryFn: getUserMe,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
 
   const handleDeleteUser = async () => {
     const response = await userDelete();
@@ -30,7 +40,7 @@ const MyPage = () => {
     );
   }
 
-  if (!user) {
+  if (!data) {
     return <div>사용자 정보가 없습니다.</div>;
   }
 
@@ -38,7 +48,7 @@ const MyPage = () => {
     <div className="pt-8 px-8 pb-5 flex flex-col justify-between">
       <div>
         <MyPageHeader />
-        <ProfileInfo user={user} />
+        <ProfileInfo user={data} />
       </div>
       <DeleteUserDialog onDelete={handleDeleteUser} />
     </div>
