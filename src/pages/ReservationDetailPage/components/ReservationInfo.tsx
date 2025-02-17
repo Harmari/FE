@@ -142,10 +142,12 @@ const ReservationInfo = ({ reservation }: ReservationInfoProps) => {
       </article>
       <div className="border border-gray-scale-200 rounded text-sm text-gray-scale-400 p-2 mb-3 text-center">
         {reservation.mode === "대면" && designer.shop_address}
-        {reservation.mode === "비대면" &&
+        {!isReReservation &&
+          reservation.mode === "비대면" &&
           (isWithin30Minutes(reservation.reservation_date_time)
             ? googleMeetLink || "구글 미트 링크를 생성 중입니다..."
             : "구글 미트 링크는 30분 전에 생성됩니다.")}
+        {isReReservation && "이용이 완료되었습니다."}
       </div>
 
       {/* 재예약 상태인 경우 재예약 버튼 표시, 그렇지 않으면 예약 취소 버튼 표시 */}
