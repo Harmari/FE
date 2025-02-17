@@ -122,7 +122,7 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
             </DrawerTitle>
           </DrawerHeader>
 
-          <div className="flex flex-col gap-[10px] pb-[30px]">
+          <div className="flex flex-col gap-[10px] mb-1">
             {availableModes?.includes("대면") ? (
               <div
                 className={`p-3 cursor-pointer rounded-md border ${
