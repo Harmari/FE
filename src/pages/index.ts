@@ -1,5 +1,4 @@
 export { default as LoginPage } from "./LoginPage";
-export { default as AuthSuccessPage } from "./AuthSuccessPage";
 export { default as DesignerListPage } from "./DesignerListPage";
 export { default as PaymentPage } from "./PaymentPage";
 export { default as PaymentSuccessPage } from "./PaymentSuccessPage";
