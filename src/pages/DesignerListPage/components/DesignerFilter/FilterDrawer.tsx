@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
 import DesignerFilterDrawer from "./DesignerFilterDrawer";
 import { DesignerFilterMode, DesignerLocation, FilterOptions } from "@/types/types";
 import { useEffect, useState } from "react";
@@ -58,10 +50,6 @@ const FilterDrawer = ({
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerContent className="min-w-[375px] max-w-[430px] m-auto px-[18px] pb-[18px]">
-        <DrawerHeader>
-          <DrawerTitle></DrawerTitle>
-          <DrawerDescription></DrawerDescription>
-        </DrawerHeader>
         {/* 필터 */}
         <DesignerFilterDrawer
           selectedOption={selectedOption}
