@@ -15,19 +15,19 @@ const timeSlots = [
     slots: [
       "12:00",
       "12:30",
-      "1:00",
-      "1:30",
-      "2:00",
-      "2:30",
-      "3:00",
-      "3:30",
-      "4:00",
-      "4:30",
-      "5:00",
-      "5:30",
-      "6:00",
-      "6:30",
-      "7:00",
+      "13:00",
+      "13:30",
+      "14:00",
+      "14:30",
+      "15:00",
+      "15:30",
+      "16:00",
+      "16:30",
+      "17:00",
+      "17:30",
+      "18:00",
+      "18:30",
+      "19:00",
     ],
   },
 ];
@@ -45,30 +45,40 @@ const ReservationPrepare = () => {
       ? reservationData?.face_consulting_fee
       : reservationData?.non_face_consulting_fee;
 
+  function formatTo12Hour(time: string) {
+    const [hour, minute] = time.split(":").map(Number);
+    const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+    return `${String(formattedHour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  }
+
+  // 현재 시간 이전의 시간을 disabled 처리하는 함수
   const getDisabledTimes = () => {
     if (!date) return [];
 
-    const now = dayjs();
-    const isToday = dayjs(date).isSame(now, "day");
+    const now = dayjs(); // 현재 시간
+    const isToday = dayjs(date).isSame(now, "day"); // 선택한 날짜가 오늘인지 확인
 
-    return reservationList
+    // 이미 예약된 시간 목록
+    const reservedTimes = reservationList
       .filter(
         (reservation) =>
           reservation.status === "예약완료" &&
           dayjs(reservation.reservation_date_time).format("YYYY-MM-DD") ===
             dayjs(date).format("YYYY-MM-DD")
       )
-      .map((reservation) => dayjs(reservation.reservation_date_time).format("HH:mm"))
-      .concat(
-        // 오늘 날짜인 경우에만 현재 시간 이전의 시간들을 disabled 처리
-        isToday
-          ? Array.from({ length: 48 }, (_, i) => {
-              const hour = Math.floor(i / 2);
-              const minute = i % 2 === 0 ? "00" : "30";
-              return `${String(hour).padStart(2, "0")}:${minute}`;
-            }).filter((time) => dayjs(`${dayjs(date).format("YYYY-MM-DD")} ${time}`).isBefore(now))
-          : []
-      );
+      .map((reservation) => dayjs(reservation.reservation_date_time).format("HH:mm"));
+
+    // 오늘 날짜인 경우 현재 시간 이전의 시간을 disabled 처리
+    const disabledTimes = isToday
+      ? timeSlots
+          .flatMap((slot) => slot.slots)
+          .filter((time) => {
+            const timeToCheck = dayjs(`${dayjs(date).format("YYYY-MM-DD")} ${time}`);
+            return timeToCheck.isBefore(now); // 현재 시간 이전인지 확인
+          })
+      : [];
+
+    return [...reservedTimes, ...disabledTimes];
   };
 
   const disabledTimes = getDisabledTimes();
@@ -166,7 +176,7 @@ const ReservationPrepare = () => {
                       onClick={() => !disabledTimes.includes(time) && setSelectedTime(time)}
                       disabled={disabledTimes.includes(time)}
                     >
-                      {time}
+                      {formatTo12Hour(time)}
                     </button>
                   ))}
                 </div>
