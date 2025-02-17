@@ -19,9 +19,9 @@ const ReservationListPage = () => {
     queryKey: QUERY_KEY.reservationList.list(user?.user_id ?? "unknown"),
     queryFn: () => {
       if (user) {
-        return getReservationList(user.user_id); // 반드시 return 해야 함
+        return getReservationList(user.user_id);
       }
-      return Promise.resolve([]); // 사용자 정보가 없을 때 빈 배열 반환
+      return Promise.resolve([]);
     },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
