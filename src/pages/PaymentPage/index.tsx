@@ -6,16 +6,16 @@ import { paymentApi } from "../../services/paymentApi";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PATH } from "@/constants/path";
-import { formatReservationDate } from "@/utils/dayFormat";
+import { formatReservationDate, formatReverseDate } from "@/utils/dayFormat";
+import { PaymentsData } from "@/types/types";
 
 const PaymentPage = () => {
-  // Removed hardcoded user_id
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<"BANK" | "KAKAO" | null>(null);
   const { state } = useLocation();
-  const reservationData = state?.reservationData;
+  const PaymentsData: PaymentsData = state;
+  console.log(state);
   const navigate = useNavigate();
   const [agreements, setAgreements] = useState({
     all: false,
@@ -32,7 +32,7 @@ const PaymentPage = () => {
       const userInfo = await getUserMe();
 
       const readyResponse = await paymentApi.ready({
-        reservation_id: reservationData.reservationId,
+        reservation_id: PaymentsData.id,
         user_id: userInfo.user_id,
         payment_method: selectedMethod === "BANK" ? "BANK" : "KAKAO_PAY",
         amount: 40000,
@@ -43,18 +43,18 @@ const PaymentPage = () => {
       localStorage.setItem("order_id", readyResponse.payment_id);
 
       await ReservationCreate({
-        reservation_id: reservationData.reservationId,
-        designer_id: "",
+        reservation_id: PaymentsData.id,
+        designer_id: PaymentsData.id,
         user_id: userInfo.user_id,
-        reservation_date_time: state.selectedDateTime,
-        consulting_fee: state.servicePrice,
+        reservation_date_time: formatReverseDate(state.selectedDateTime),
+        consulting_fee: state.servicePrice.toString(),
         google_meet_link: "",
-        mode: reservationData.selectedMode,
+        mode: PaymentsData.selectedMode,
         status: "예약완료",
       });
 
       // Navigate to the success page
-      navigate(PATH.payments, { state: { reservationId: reservationData.reservationId } });
+      navigate(PATH.payments, { state: { reservationId: PaymentsData.id } });
     } catch (error) {
       console.error("예약 실패:", error);
       setError("예약에 실패했습니다. 다시 시도해주세요.");
@@ -106,8 +106,8 @@ const PaymentPage = () => {
           <CardContent className="p-4">
             <h2 className="font-medium mb-2">예약정보</h2>
             <div className="space-y-2 text-sm text-gray-600">
-              <div>{reservationData.selectedMode}</div>
-              <div>디자이너 이름 : {reservationData.name}</div>
+              <div>{PaymentsData.selectedMode}</div>
+              <div>디자이너 이름 : {PaymentsData.name}</div>
               <div>일정: {formatReservationDate(state.selectedDateTime)}</div>
               <div>가격: {Intl.NumberFormat("ko-KR").format(Number(state.servicePrice))}원</div>
             </div>
