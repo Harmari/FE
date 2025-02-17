@@ -38,7 +38,7 @@ const DesignerFilterDrawer = ({
         <div className="flex flex-col gap-[10px] text-gray-scale-400">
           {/* 대면 */}
           <div
-            className={`border border-[#F2F2F2] rounded-lg py-4 px-4 cursor-pointer ${
+            className={`border border-[#F2F2F2] rounded-lg px-[14px] py-[12px] cursor-pointer ${
               selectedOption.designer_mode === "대면"
                 ? "bg-primary-100 text-selected-default"
                 : " bg-gray-scale-100"
@@ -63,7 +63,7 @@ const DesignerFilterDrawer = ({
 
           {/* 비대면 */}
           <div
-            className={`border border-[#F2F2F2] rounded-lg py-4 px-4 cursor-pointer ${
+            className={`border border-[#F2F2F2] rounded-lg px-[14px] py-[12px] cursor-pointer ${
               selectedOption.designer_mode === "비대면"
                 ? "bg-primary-100 text-selected-default"
                 : "bg-gray-scale-100"
