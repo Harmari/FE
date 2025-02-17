@@ -10,6 +10,7 @@ import { formatReservationDate, formatReverseDate } from "@/utils/dayFormat";
 import { PaymentsData } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import QUERY_KEY from "@/constants/queryKey";
+import { generateShortUuid } from "@/utils/generateUuid";
 
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
@@ -55,15 +56,17 @@ const PaymentPage = () => {
       localStorage.setItem("tid", readyResponse.tid);
       localStorage.setItem("order_id", readyResponse.payment_id);
 
+      const shortUuid = generateShortUuid();
+
       await ReservationCreate({
-        reservation_id: PaymentsData.id,
+        reservation_id: shortUuid,
         designer_id: PaymentsData.id,
         user_id: user.user_id,
         reservation_date_time: formatReverseDate(state.selectedDateTime),
         consulting_fee: state.servicePrice.toString(),
         google_meet_link: "",
         mode: PaymentsData.selectedMode,
-        status: selectedMethod === "BANK" ? "입금 대기중" : "예약완료",
+        status: selectedMethod === "BANK" ? "결제대기" : "예약완료",
       });
 
       // Navigate to the success page
