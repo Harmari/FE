@@ -1,5 +1,5 @@
 import { PATH } from "@/constants/path";
-import { LoginPage } from "@/pages";
+import { AuthSuccessPage, LoginPage } from "@/pages";
 
 const LOGIN_ROUTES = [
   {
@@ -9,6 +9,10 @@ const LOGIN_ROUTES = [
   {
     path: PATH.login,
     element: <LoginPage />,
+  },
+  {
+    path: PATH.authSuccess,
+    element: <AuthSuccessPage />,
   },
 ];
 

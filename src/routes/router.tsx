@@ -9,11 +9,13 @@ import {
   RESERVATION_ROUTES,
   MYPAGE_ROUTES,
 } from "./route";
+import { checkAuthLoader, tokenLoader } from "@/utils/authToken";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    loader: tokenLoader,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -23,6 +25,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomeLayout />,
+        loader: checkAuthLoader,
         children: [
           {
             path: "/",

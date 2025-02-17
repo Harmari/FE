@@ -2,6 +2,7 @@
 export const PATH = {
   login: "/login",
   logout: "/logout",
+  authSuccess: "/login-success",
 
   designerList: "/designer-list",
   designerDetail: (id: string) => `/designer/${id}`,
