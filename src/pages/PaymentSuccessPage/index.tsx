@@ -10,6 +10,8 @@ import { Check } from "lucide-react";
 import { getReservationDetail } from "@/apis/reservationDetail";
 import devApi from "@/config/axiosDevConfig";
 import { RESERVATION_ENDPOINT } from "@/apis/endpoints";
+import { DesignerDetailResponse } from "@/types/apiTypes";
+import { getDesignerDetail } from "@/apis/designerDetail";
 
 interface PaymentInfo {
   amount: number;
@@ -36,6 +38,7 @@ const PaymentSuccessPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const isProcessingRef = useRef(false);
+  const [designerInfo, setDesignerInfo] = useState<DesignerDetailResponse | null>(null);
 
   const [reservationPayload, setReservationPayload] = useState<ReservationPayload>({
     reservation_id: "67b1e3299c941b90f4ffd518",
@@ -120,6 +123,9 @@ const PaymentSuccessPage = () => {
               status: reservationDetail.status,
             });
             await handleCreateReservation();
+
+            const designerDetail = await getDesignerDetail(reservationDetail.designer_id);
+            setDesignerInfo(designerDetail);
           }
         }
       } catch (err) {
@@ -189,12 +195,89 @@ const PaymentSuccessPage = () => {
 
       <Separator className="my-4" />
 
+      {/* 예약 상세 정보 */}
+      <Card className="border-0 shadow-none px-6">
+        <CardHeader className="p-4 pb-2">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold">{reservationPayload.designer_id}</h2>
+            <span className="px-3 py-1 text-xs text-[#B434FF] bg-[rgba(216,150,255,0.25)] rounded-full">
+              {reservationPayload.mode}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex">
+            <span className="text-[14px] text-gray-400 w-24">일정</span>
+            <span className="text-[14px] text-gray-700">
+              {new Date(reservationPayload.reservation_date_time).toLocaleString("ko-KR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                weekday: "long",
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </span>
+          </div>
+
+          {reservationPayload.mode === "비대면" ? (
+            <div className="flex flex-row items-center gap-4 w-[262px] h-8">
+              <span className="text-[14px] text-[#C3C3C3] leading-[19px] tracking-[-0.04em]">
+                컨설팅 링크
+              </span>
+              <button className="flex justify-center items-center px-5 py-[5px] w-[182px] h-8 bg-[#C3C3C3] rounded-[15px]">
+                <span className="text-[14px] font-medium text-white text-center leading-[19px] tracking-[-0.04em]">
+                  예약 30분 전 활성화됩니다
+                </span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex">
+              <span className="text-[14px] text-gray-400 w-24">매장 정보</span>
+              <span className="text-[14px] text-gray-700">{designerInfo?.shop_address}</span>
+              <button
+                className="text-[14px] text-[#0C63D0]"
+                onClick={() => {
+                  if (designerInfo?.shop_address) {
+                    navigator.clipboard.writeText(designerInfo.shop_address);
+                  }
+                }}
+              >
+                복사
+              </button>
+            </div>
+          )}
+
+          <div className="flex">
+            <span className="text-[14px] text-gray-400 w-24">결제수단</span>
+            <span className="text-[14px] text-gray-700">카카오페이</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator className="my-4" />
+
+      {/* 가격 정보 */}
+      <Card className="border-0 shadow-none px-6">
+        <CardContent className="p-4">
+          <div className="relative">
+            <div className="border-t border-[#C3C3C3] w-full absolute top-0" />
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-[16px] font-semibold text-black">가격</span>
+              <span className="text-[16px] font-semibold text-[#D896FF]">
+                {Number(reservationPayload.consulting_fee).toLocaleString()}원
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* 하단 버튼 */}
-      <div className="min-w-[375px] max-w-[430px] m-auto p-4 bg-white border-t mt-8">
-        <div className="flex gap-3 px-2">
+      <div className="absolute w-[318px] h-[48px] left-[20px] top-[444px]">
+        <div className="flex gap-[10px]">
           <Button
             variant="outline"
-            className="w-1/2 h-12"
+            className="flex justify-center items-center w-[155px] h-[48px] px-5 py-[5px] bg-white border border-[#D896FF] rounded-[12px] text-[#D896FF] font-semibold text-base leading-[21px] tracking-[-0.04em]"
             onClick={() =>
               paymentInfo?.reservation_id
                 ? navigate(PATH.reservationDetail(paymentInfo?.reservation_id))
@@ -204,7 +287,7 @@ const PaymentSuccessPage = () => {
             예약확인
           </Button>
           <Button
-            className="w-1/2 h-12 bg-black hover:bg-gray-800"
+            className="flex justify-center items-center w-[155px] h-[48px] px-5 py-[5px] bg-[#D896FF] rounded-[12px] text-white font-semibold text-base leading-[21px] tracking-[-0.04em] shadow-[0px_0px_4px_rgba(0,0,0,0.25)]"
             onClick={() => navigate(PATH.designerList)}
           >
             홈으로
