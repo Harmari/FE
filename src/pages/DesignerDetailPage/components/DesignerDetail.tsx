@@ -102,8 +102,6 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
           </div>
         </div>
 
-        <div className="text-[14px] text-[#676767] mb-[22px]">{data?.introduction}</div>
-
         <div className="mb-[22px]">
           <h4 className="font-bold mb-[10px]">전문분야</h4>
           <div>
