@@ -76,7 +76,9 @@ const ReservationPrepare = () => {
           .flatMap((slot) => slot.slots)
           .filter((time) => {
             const timeToCheck = dayjs(`${dayjs(date).format("YYYY-MM-DD")} ${time}`);
-            return timeToCheck.isBefore(now); // 현재 시간 이전인지 확인
+
+            const nextTimeToCheck = now.add(30, "minutes").startOf("hour").add(30, "minutes");
+            return timeToCheck.isBefore(nextTimeToCheck); // 현재 시간 + 30분 이전인지 확인
           })
       : [];
 

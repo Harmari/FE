@@ -47,14 +47,13 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         day: cn(
           "h-11 w-11 rounded-full font-normal aria-selected:bg-primary-100 aria-selected:text-white relative flex flex-col items-center justify-center",
           "sm:h-14 sm:w-14",
-          "md:h-16 md:w-16"
+          "md:h-14 md:w-14"
         ),
         day_range_start: "day-range-start",
         day_range_end: "day-range-end",
         day_selected:
           "bg-purple-500 text-white hover:bg-purple-600 hover:text-white focus:bg-purple-500 focus:text-white",
-        day_today:
-          "bg-accent text-accent-foreground after:content-['오늘'] after:block after:text-[10px] after:absolute after:bottom-[-3px]",
+        day_today: "bg-accent text-accent-foreground",
         day_outside:
           "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
         day_disabled: "text-muted-foreground opacity-30",
