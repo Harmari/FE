@@ -62,6 +62,7 @@ const ReservationInfo = ({ reservation, designer }: ReservationInfoProps) => {
         queryKey: QUERY_KEY.reservationList.detail(reservation.id),
       });
 
+      alert("예약이 취소되었습니다.");
       navigate(PATH.reservationList);
     } catch (error) {
       console.error("예약 취소 중 오류 발생:", error);
