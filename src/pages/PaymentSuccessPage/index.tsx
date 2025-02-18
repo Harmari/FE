@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, ChangeEvent } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { paymentApi } from "../../services/paymentApi";
 import { PATH } from "@/constants/path";
@@ -7,7 +7,9 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Check } from "lucide-react";
-import axios from "axios";
+import { getReservationDetail } from "@/apis/reservationDetail";
+import devApi from "@/config/axiosDevConfig";
+import { RESERVATION_ENDPOINT } from "@/apis/endpoints";
 
 interface PaymentInfo {
   amount: number;
@@ -35,7 +37,6 @@ const PaymentSuccessPage = () => {
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const isProcessingRef = useRef(false);
 
-  // Reservation 생성용 폼 상태 (기본값은 고정값)
   const [reservationPayload, setReservationPayload] = useState<ReservationPayload>({
     reservation_id: "67b1e3299c941b90f4ffd518",
     designer_id: "67ab727934cd2146254af06a",
@@ -47,21 +48,12 @@ const PaymentSuccessPage = () => {
     status: "예약완료",
   });
 
-  // input change handler
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setReservationPayload((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   // 예약 생성 API 호출 함수
-  const handleCreateReservation = async () => {
+  const handleCreateReservation = useCallback(async () => {
     try {
       setLoading(true);
-      const reservationResponse = await axios.post(
-        "https://harmari.duckdns.org/reservation/create",
+      const reservationResponse = await devApi.post(
+        RESERVATION_ENDPOINT.create,
         reservationPayload
       );
       console.log("Reservation created:", reservationResponse.data);
@@ -76,25 +68,30 @@ const PaymentSuccessPage = () => {
       }
       setLoading(false);
     }
+  }, [reservationPayload]);
+
+  const handlePaymentApproval = async (pg_token: string, tid: string, order_id: string) => {
+    try {
+      const response = await paymentApi.approve({ tid, pg_token, order_id });
+      localStorage.removeItem("tid");
+      localStorage.removeItem("order_id");
+      return response;
+    } catch (err) {
+      throw new Error(
+        err instanceof AxiosError
+          ? err.response?.data?.detail || "결제 승인 처리 중 오류가 발생했습니다."
+          : "결제 승인 처리 중 오류가 발생했습니다."
+      );
+    }
   };
 
   useEffect(() => {
-    // 개발 테스트용 URL인 경우 mock 데이터 사용
-    // if (window.location.pathname === '/payment/success-test') {
-    //   setPaymentInfo({
-    //     amount: 40000,
-    //     reservation_id: 'test-123',
-    //     approved_at: new Date().toISOString()
-    //   });
-    //   setLoading(false);
-    //   return;
-    // }
-
-    const approvePayment = async () => {
+    const processPaymentAndReservation = async () => {
       if (isProcessingRef.current) return;
       isProcessingRef.current = true;
 
       try {
+        setLoading(true);
         const pg_token = searchParams.get("pg_token");
         const tid = localStorage.getItem("tid");
         const order_id = localStorage.getItem("order_id");
@@ -103,41 +100,38 @@ const PaymentSuccessPage = () => {
           throw new Error("결제 정보가 없습니다.");
         }
 
-        try {
-          // 결제 승인 처리
-          const response = await paymentApi.approve({
-            tid,
-            pg_token,
-            order_id,
-          });
+        // 결제 승인 처리
+        const paymentResponse = await handlePaymentApproval(pg_token, tid, order_id);
+        setPaymentInfo(paymentResponse);
 
-          localStorage.removeItem("tid");
-          localStorage.removeItem("order_id");
+        // 예약 상세 정보 조회 및 예약 생성
+        if (paymentResponse.reservation_id) {
+          const reservationDetail = await getReservationDetail(paymentResponse.reservation_id);
 
-          // 결제 승인 응답을 이용해 paymentInfo 상태 설정
-          setPaymentInfo({ ...response });
-
-          setLoading(false);
-        } catch (err: unknown) {
-          if (err instanceof AxiosError) {
-            setError(err.response?.data?.detail || "결제 승인 처리 중 오류가 발생했습니다.");
-          } else {
-            setError("결제 승인 처리 중 오류가 발생했습니다.");
+          if (reservationDetail) {
+            setReservationPayload({
+              reservation_id: reservationDetail.id,
+              designer_id: reservationDetail.designer_id,
+              user_id: reservationDetail.user_id,
+              reservation_date_time: reservationDetail.reservation_date_time,
+              consulting_fee: reservationDetail.consulting_fee.toString(),
+              google_meet_link: reservationDetail.google_meet_link,
+              mode: reservationDetail.mode,
+              status: reservationDetail.status,
+            });
+            await handleCreateReservation();
           }
-          setLoading(false);
         }
-      } catch {
-        setError("결제 정보가 올바르지 않습니다.");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "처리 중 오류가 발생했습니다.");
+      } finally {
         setLoading(false);
+        isProcessingRef.current = false;
       }
     };
 
-    approvePayment();
-
-    return () => {
-      isProcessingRef.current = false;
-    };
-  }, [searchParams]);
+    processPaymentAndReservation();
+  }, [handleCreateReservation, searchParams]);
 
   if (loading) {
     return <div className="text-center p-8">처리 중...</div>;
@@ -151,7 +145,7 @@ const PaymentSuccessPage = () => {
     <div className="min-h-dvh">
       {/* 상단 완료 메시지 */}
       <div className="flex flex-col items-center justify-center py-8 space-y-2">
-        <Check className="w-10 h-10 mb-2 text-black stroke-2" />
+        <Check className="w-10 h-10 mb-2 text-[#D896FF] stroke-2" />
         <h1 className="text-lg font-medium">예약이 완료되었습니다.</h1>
       </div>
 
@@ -190,105 +184,6 @@ const PaymentSuccessPage = () => {
               {paymentInfo && new Date(paymentInfo.approved_at).toLocaleString()}
             </span>
           </div>
-        </CardContent>
-      </Card>
-
-      <Separator className="my-4" />
-
-      {/* 예약 생성 테스트용 입력 폼 */}
-      <Card className="border-0 shadow-none px-6">
-        <CardHeader className="p-4 pb-2">
-          <CardTitle className="text-lg font-medium">예약 생성 테스트</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-600">
-              예약 번호
-              <input
-                type="text"
-                name="reservation_id"
-                value={reservationPayload.reservation_id}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              디자이너 ID
-              <input
-                type="text"
-                name="designer_id"
-                value={reservationPayload.designer_id}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              사용자 ID
-              <input
-                type="text"
-                name="user_id"
-                value={reservationPayload.user_id}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              예약 날짜 및 시간
-              <input
-                type="text"
-                name="reservation_date_time"
-                value={reservationPayload.reservation_date_time}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              컨설팅 비용
-              <input
-                type="text"
-                name="consulting_fee"
-                value={reservationPayload.consulting_fee}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              Google Meet 링크
-              <input
-                type="text"
-                name="google_meet_link"
-                value={reservationPayload.google_meet_link}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              예약 모드
-              <input
-                type="text"
-                name="mode"
-                value={reservationPayload.mode}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-            <label className="block text-sm text-gray-600">
-              예약 상태
-              <input
-                type="text"
-                name="status"
-                value={reservationPayload.status}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md"
-              />
-            </label>
-          </div>
-          <Button
-            className="mt-4 bg-black hover:bg-gray-800 text-white w-full h-12"
-            onClick={handleCreateReservation}
-          >
-            예약 생성
-          </Button>
         </CardContent>
       </Card>
 
