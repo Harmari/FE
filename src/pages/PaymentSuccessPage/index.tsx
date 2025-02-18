@@ -295,7 +295,7 @@ const PaymentSuccessPage = () => {
       <Separator className="my-4" />
 
       {/* 하단 버튼 */}
-      <div className="min-w-[375px] max-w-[430px] m-auto p-4 bg-white border-t mt-8">
+      <div className="min-w-[375px] max-w-[450px] m-auto p-4 bg-white border-t mt-8">
         <div className="flex gap-3 px-2">
           <Button
             variant="outline"
