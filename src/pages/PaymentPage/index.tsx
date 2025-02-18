@@ -36,6 +36,13 @@ const PaymentPage = () => {
     refetchOnMount: false,
   });
 
+  // 모바일 환경 체크 함수 추가
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  };
+
   const handlePayment = async () => {
     try {
       setLoading(true);
@@ -61,30 +68,53 @@ const PaymentPage = () => {
       localStorage.setItem("tid", readyResponse.tid);
       localStorage.setItem("order_id", readyResponse.payment_id);
 
-      const shortUuid = generateShortUuid();
-
-      await ReservationCreate({
-        reservation_id: shortUuid,
-        designer_id: ReservationData.id,
-        user_id: user.user_id,
-        reservation_date_time: formatReverseDate(state.selectedDate),
-        consulting_fee: state.servicePrice.toString(),
-        google_meet_link: "",
-        mode: ReservationData.selectedMode,
-        status: selectedMethod === "BANK" ? "결제대기" : "예약완료",
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: QUERY_KEY.reservationList.list(user.user_id),
-      });
-
-      console.log(readyResponse);
-      // Navigate to the success page
       if (selectedMethod === "BANK") {
+        const shortUuid = generateShortUuid();
+
+        await ReservationCreate({
+          reservation_id: shortUuid,
+          designer_id: ReservationData.id,
+          user_id: user.user_id,
+          reservation_date_time: formatReverseDate(state.selectedDate),
+          consulting_fee: state.servicePrice.toString(),
+          google_meet_link: "",
+          mode: ReservationData.selectedMode,
+          status: "결제대기",
+        });
+
+        // 모든 예약 관련 쿼리 무효화
+        await queryClient.invalidateQueries({
+          queryKey: QUERY_KEY.reservationList.all,
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: QUERY_KEY.reservationList.list(user.user_id),
+        });
+
         navigate(PATH.paymentBankTransfer, { state: ReservationData });
-      } else {
-        navigate(PATH.paymentSuccess, { state: { paymentId: readyResponse.payment_id } });
+      } else if (selectedMethod === "KAKAO") {
+        // 카카오페이 결제 시 디바이스에 따른 리다이렉트
+        const redirectUrl = isMobile()
+          ? readyResponse.next_redirect_mobile_url
+          : readyResponse.next_redirect_pc_url;
+
+        window.location.href = redirectUrl;
+        return;
       }
+
+      // // Navigate to the success page
+      // navigate(PATH.paymentSuccess, {
+      //   state: {
+      //     reservation_id: ReservationData.id,
+      //     designer_id: ReservationData.id,
+      //     user_id: user.user_id,
+      //     reservation_date_time: formatReverseDate(state.selectedDate),
+      //     consulting_fee: state.servicePrice.toString(),
+      //     google_meet_link: "",
+      //     mode: ReservationData.selectedMode,
+      //     status: "예약완료",
+      //   },
+      // });
     } catch (error) {
       console.error("예약 실패:", error);
       setError("예약에 실패했습니다. 다시 시도해주세요.");
