@@ -115,7 +115,7 @@ const ReservationPrepare = () => {
       state: {
         ...reservationData,
         servicePrice: servicePrice,
-        selectedDateTime: selectedDateTime, // 날짜와 시간이 결합된 Date 객체
+        selectedDate: selectedDateTime, // 날짜와 시간이 결합된 Date 객체
       },
     });
   };
