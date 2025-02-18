@@ -183,8 +183,12 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
                 <p className="text-[10px] text-gray-scale-300">실제 샵에 방문하여 컨설팅 진행</p>
               </div>
             ) : (
-              <div className={"p-3 cursor-pointer bg-[#F0F0F0] flex flex-col rounded-md"}>
-                <span className="text-[16px] font-bold">비대면만 가능합니다</span>
+              <div
+                className={
+                  "p-3 min-h-[65px] cursor-pointer bg-[#F0F0F0] flex items-center rounded-md"
+                }
+              >
+                <span className="text-[14px] font-bold">비대면만 가능합니다</span>
               </div>
             )}
 
@@ -210,10 +214,10 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
             ) : (
               <div
                 className={
-                  "p-3 w-[50%] cursor-pointer bg-[#F0F0F0] flex items-center justify-center flex-col rounded-md"
+                  "p-3 min-h-[65px] cursor-pointer bg-[#F0F0F0] flex items-center rounded-md"
                 }
               >
-                <span className="text-[16px] font-bold">대면만 가능합니다</span>
+                <span className="text-[14px] font-bold">대면만 가능합니다</span>
               </div>
             )}
           </div>
