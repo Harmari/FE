@@ -6,17 +6,18 @@ import { paymentApi } from "../../services/paymentApi";
 // import { Card, CardContent } from "@/components/ui/card";
 import { PATH } from "@/constants/path";
 import { formatReservationDate, formatReverseDate } from "@/utils/dayFormat";
-import { PaymentsData } from "@/types/types";
-import { useQuery } from "@tanstack/react-query";
+import { ConsultingReservationData } from "@/types/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import QUERY_KEY from "@/constants/queryKey";
 import { generateShortUuid } from "@/utils/generateUuid";
 
 const PaymentPage = () => {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<"BANK" | "KAKAO" | null>(null);
   const { state } = useLocation();
-  const PaymentsData: PaymentsData = state;
+  const ReservationData: ConsultingReservationData = state;
   const navigate = useNavigate();
   // const [agreements, setAgreements] = useState({
   //   all: false,
@@ -40,14 +41,20 @@ const PaymentPage = () => {
       setLoading(true);
 
       if (!user) {
+        setError("로그인이 필요합니다.");
+        return;
+      }
+
+      if (!selectedMethod) {
+        setError("결제 방법을 선택해주세요.");
         return;
       }
 
       const readyResponse = await paymentApi.ready({
-        reservation_id: PaymentsData.id,
+        reservation_id: ReservationData.id,
         user_id: user.user_id,
         payment_method: selectedMethod === "BANK" ? "BANK" : "KAKAO_PAY",
-        amount: 40000,
+        amount: state.servicePrice,
         status: "pending",
       });
 
@@ -58,17 +65,26 @@ const PaymentPage = () => {
 
       await ReservationCreate({
         reservation_id: shortUuid,
-        designer_id: PaymentsData.id,
+        designer_id: ReservationData.id,
         user_id: user.user_id,
-        reservation_date_time: formatReverseDate(state.selectedDateTime),
+        reservation_date_time: formatReverseDate(state.selectedDate),
         consulting_fee: state.servicePrice.toString(),
         google_meet_link: "",
-        mode: PaymentsData.selectedMode,
+        mode: ReservationData.selectedMode,
         status: selectedMethod === "BANK" ? "결제대기" : "예약완료",
       });
 
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEY.reservationList.list(user.user_id),
+      });
+
+      console.log(readyResponse);
       // Navigate to the success page
-      navigate(PATH.payments, { state: { reservationId: PaymentsData.id } });
+      if (selectedMethod === "BANK") {
+        navigate(PATH.paymentBankTransfer, { state: ReservationData });
+      } else {
+        navigate(PATH.paymentSuccess, { state: { paymentId: readyResponse.payment_id } });
+      }
     } catch (error) {
       console.error("예약 실패:", error);
       setError("예약에 실패했습니다. 다시 시도해주세요.");
@@ -149,15 +165,15 @@ const PaymentPage = () => {
       </header>
       {/* 예약 정보 */}
       <section className="px-6">
-        <h3 className="text-sub-title font-bold mb-3">{PaymentsData.name}</h3>
+        <h3 className="text-sub-title font-bold mb-3">{ReservationData.name}</h3>
         <div className="flex flex-col gap-2">
           <p className="flex">
             <span className="w-24 text-body1 text-[#C3C3C3]">일정</span>
-            <span>{formatReservationDate(state.selectedDateTime)}</span>
+            <span>{formatReservationDate(state.selectedDate)}</span>
           </p>
           <p className="flex">
             <span className="w-24 text-body1 text-[#C3C3C3]">컨설팅 방식</span>
-            <span>{PaymentsData.selectedMode}</span>
+            <span>{ReservationData.selectedMode}</span>
           </p>
           <div className="my-">
             <svg
