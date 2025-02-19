@@ -36,7 +36,7 @@ const ButtonSection = () => {
     <section>
       <button
         onClick={handleOAuth}
-        className="flex items-center justify-center gap-2 w-full rounded-xl py-3 mt-5 mb-3 text-sub-title bg-white text-[#000]"
+        className="flex items-center justify-center gap-[10px] w-full rounded-xl py-3 mt-5 mb-3 text-sub-title bg-white text-[#000]"
         disabled={isSubmitting}
       >
         <img src="/images/google-icon.png" alt="구글 로고" className="w-5 h-5" />
