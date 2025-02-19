@@ -176,7 +176,7 @@ const DesignerDetail = ({ id }: DesignerDetailProps) => {
         </div>
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="p-0 overflow-hidden min-w-[350px] max-w-[450px] m-auto w-full h-full">
+          <DialogContent className="p-0 overflow-hidden min-w-[350px] max-w-[450px] m-auto ">
             {selectedVideo && (
               <iframe
                 width="100%"
