@@ -29,8 +29,6 @@ const ProfileInfo = ({ user, handleDeleteUser }: ProfileInfoProps) => {
     queryFn: () => getReservationList(user.user_id),
   });
 
-  console.log(reservationList);
-
   return (
     <section>
       <article className="mb-6">
